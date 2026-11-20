@@ -40,10 +40,40 @@ theorem HasDetRep.succ {p : MvPolynomial σ R} {m : ℕ} (h : HasDetRep p m) :
     HasDetRep p (m + 1) := by
   sorry
 
-/-- TASK T-007 | hard | Grenet's upper bound: dc(perm_n) ≤ 2^n - 1
-Construction and sign convention are executable in `experiments/grenet.py`
-(verified for n ≤ 4). Source: Grenet 2011. -/
+/-- TASK T-007 | medium | Grenet's upper bound: dc(perm_n) ≤ 2^n - 1 (assembly)
+Assemble from T-009, T-010 and T-011, following `experiments/grenet_split.py`
+line by line: index set = nonempty proper subsets, `u S = g S`, check `u ᵥ* T = w`
+and `c - u ⬝ᵥ v = perm`. No cycle covers and no matrix inverse are needed.
+Blocked until T-009, T-010, T-011 are proved. Source: Grenet 2011. -/
 theorem detComplexity_perm_le (n : ℕ) : detComplexity (perm R n) ≤ 2 ^ n - 1 := by
+  sorry
+
+/-- TASK T-009 | medium | A bordered matrix with a solved linear system is a representation
+If `det T = 1` and `u ᵥ* T = w` then `det [[T, v], [w, c]] = c - u ⬝ᵥ v`.
+The proof of `exists_hasDetRep` already does this with an explicit inverse;
+here `u = w T⁻¹` is given instead, so no inverse has to be exhibited. -/
+theorem hasDetRep_of_solve {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (T : Matrix ι ι (MvPolynomial σ R)) (u v w : ι → MvPolynomial σ R) (c : MvPolynomial σ R)
+    (hT : ∀ i j, (T i j).totalDegree ≤ 1) (hv : ∀ i, (v i).totalDegree ≤ 1)
+    (hw : ∀ i, (w i).totalDegree ≤ 1) (hc : c.totalDegree ≤ 1)
+    (hdet : T.det = 1) (hu : u ᵥ* T = w) :
+    HasDetRep (c - u ⬝ᵥ v) (Fintype.card ι + 1) := by
+  sorry
+
+/-- TASK T-010 | medium | det (1 - N) = 1 when N strictly raises a rank
+If every nonzero entry `N i j` has `r i < r j`, then `1 - N` is unitriangular
+in a suitable order. Pure linear algebra; a candidate for mathlib itself. -/
+theorem det_one_sub_of_rank_lt {A : Type*} [CommRing A] {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (N : Matrix ι ι A) (r : ι → ℕ) (h : ∀ i j, N i j ≠ 0 → r i < r j) :
+    (1 - N).det = 1 := by
+  sorry
+
+/-- TASK T-011 | medium | Expansion of the permanent along the last row
+The permanent analogue of Laplace expansion, without signs. Indexing is
+checked in `experiments/grenet_split.py`. A candidate for mathlib itself. -/
+theorem permanent_expand_last_row {A : Type*} [CommRing A] {n : ℕ}
+    (M : Matrix (Fin (n + 1)) (Fin (n + 1)) A) :
+    M.permanent = ∑ j, M (Fin.last n) j * (M.submatrix Fin.castSucc j.succAbove).permanent := by
   sorry
 
 /-- TASK T-008 | hard | Mignon–Ressayre lower bound: dc(perm_n) ≥ n²/2 in characteristic 0
