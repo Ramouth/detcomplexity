@@ -7,6 +7,11 @@ Nobody here claims a proof, and no single contribution will be one. The bet is
 that a problem this hard yields to many small verified steps sooner than to
 one large unverified leap.
 
+**Status (2026-11-21): paused.** This was built in one evening as an experiment
+and is not under active development. It stays open: issues and pull requests
+are welcome and will be answered, and everything needed to continue is in
+`CONTRIBUTING.md` and the scoreboard below.
+
 > "The unknown thing to be known appeared to me as some stretch of earth or
 > hard marl, resisting penetration… the sea advances insensibly in silence,
 > nothing seems to happen, nothing moves, the water is so far off you hardly
