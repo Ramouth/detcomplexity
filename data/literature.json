@@ -1,0 +1,10 @@
+{
+  "_comment": "Bounds known from the literature but NOT verified in this repo. Each entry is a task waiting to happen: replace it with a Lean proof or a certificate. Citations were entered from memory and must be checked against the papers before anyone relies on them.",
+  "lower": [
+    {"n": 3, "value": 7, "source": "Alper, Bogart, Velasco: A lower bound for the determinantal complexity of a hypersurface (citation unchecked)"},
+    {"n": "all", "formula": "ceil(n^2/2)", "source": "Mignon, Ressayre 2004, characteristic 0 (task T-008)"}
+  ],
+  "upper": [
+    {"n": "all", "formula": "2^n-1", "source": "Grenet 2011 (task T-007; certificates here for n <= 4)"}
+  ]
+}

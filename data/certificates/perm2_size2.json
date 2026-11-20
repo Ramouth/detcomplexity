@@ -1,0 +1,1 @@
+{"poly": "perm", "n": 2, "size": 2, "source": "sign flip of one entry of the 2x2 determinant", "matrix": [[{"x00": 1}, {"x01": -1}], [{"x10": 1}, {"x11": 1}]]}
