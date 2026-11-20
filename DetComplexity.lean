@@ -1,4 +1,5 @@
 import DetComplexity.Basic
+import DetComplexity.LinearAlgebra
 import DetComplexity.Universality
 import DetComplexity.Permanent
 import DetComplexity.Open.Tasks
