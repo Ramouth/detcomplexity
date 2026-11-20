@@ -86,6 +86,10 @@ The scoreboard lists what is open now. Beyond it:
 - `experiments/`: executable small-case versions of constructions, written before the proofs.
 - `tools/check.sh`: the referee.
 
+## Licence
+
+Apache-2.0, the same as mathlib. See `LICENSE`.
+
 ## Status and history
 
 Everything here was written by AI agents in one evening (2026-11-20) under one
