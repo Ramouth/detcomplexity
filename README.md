@@ -103,6 +103,12 @@ Literature bounds are not verified here. Sources and hypotheses: `data/literatur
 | T-009 | medium | A bordered matrix with a solved linear system is a representation | `hasDetRep_of_solve` | `DetComplexity/Open/Tasks.lean` |
 | T-010 | easy | det (1 - N) = 1 when N strictly raises a rank | `det_one_sub_of_rank_lt` | `DetComplexity/Open/Tasks.lean` |
 | T-011 | medium | Expansion of the permanent along the last row | `permanent_expand_last_row` | `DetComplexity/Open/Tasks.lean` |
+| T-012 | easy | The permanent is invariant under permuting rows and columns | `rename_prodMap_perm` | `DetComplexity/Open/Geometry.lean` |
+| T-013 | easy | The permanent is invariant under transposition | `rename_swap_perm` | `DetComplexity/Open/Geometry.lean` |
+| T-014 | easy | The determinant under permuting rows and columns | `rename_prodMap_detPoly` | `DetComplexity/Open/Geometry.lean` |
+| T-015 | medium | A determinantal representation is a projection of the determinant | `hasDetRep_iff_projection` | `DetComplexity/Open/Geometry.lean` |
+| T-016 | easy | Upper bounds on dc are witnesses | `detComplexity_le_iff` | `DetComplexity/Open/Geometry.lean` |
+| T-017 | easy | dc is constant along invertible affine changes of variables | `detComplexity_bind₁_eq` | `DetComplexity/Open/Geometry.lean` |
 
 ### Proved (19 theorems, standard axioms only)
 
