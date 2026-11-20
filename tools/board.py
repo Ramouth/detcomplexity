@@ -2,7 +2,8 @@
 """Generate the scoreboard block in README.md from the code, so it cannot drift from the proofs.
 
 Sources of truth:
-  * Lean: every theorem in DetComplexity/ and the axioms it depends on
+  * Lean: every constant the project adds to the environment, as listed by Lean
+    itself (not parsed from source), with the axioms it depends on
     (a theorem is "proved" iff it does not depend on sorryAx).
   * data/certificates/: explicit matrices, re-verified on every run.
   * data/literature.json: known results not yet verified here.
@@ -10,7 +11,8 @@ Sources of truth:
 Rules enforced (exit 1 on violation):
   * a theorem outside DetComplexity/Open/ must be proved, on standard axioms only;
   * a theorem inside DetComplexity/Open/ must still be open (if you proved it, move it out);
-  * no existing statement may change or disappear (compared with statements.lock at
+  * no constant of any kind may be an axiom, be opaque, or use a non-standard axiom;
+  * no existing statement or definition may change or disappear (compared with statements.lock at
     $STATEMENT_BASE, default HEAD) unless ALLOW_STATEMENT_CHANGE=1.
 Usage: tools/board.py          regenerate the README block and statements.lock
        tools/board.py --check  also fail if either was stale (CI)
@@ -23,7 +25,6 @@ sys.path.insert(0, str(ROOT / "tools"))
 import verify_data
 
 STANDARD = {"propext", "Classical.choice", "Quot.sound"}
-DECL = re.compile(r"(?:/--(?P<doc>(?:(?!-/).)*?)-/\s*)?^(?:theorem|lemma) (?P<name>[A-Za-z_0-9'.₀-₉]+)(?= *$| +[\[({:])", re.S | re.M)
 NMAX = 5
 
 # Which Lean theorems give which bounds on dc(perm_n). Extend when a bound is proved.
@@ -32,37 +33,58 @@ LEAN_LOWER = [("n_le_detComplexity_perm'", lambda n: n),
 LEAN_UPPER = [("detComplexity_perm_le", lambda n: 2 ** n - 1),
               ("detComplexity_perm_two", lambda n: 2 if n == 2 else None)]
 
-def declarations():
-    out = []
-    for f in sorted((ROOT / "DetComplexity").rglob("*.lean")):
-        for m in DECL.finditer(f.read_text()):
-            out.append(dict(name=m["name"], doc=(m["doc"] or "").strip(), file=str(f.relative_to(ROOT)),
-                            open="Open" in f.relative_to(ROOT).parts))
-    return out
+# Ask Lean itself what the project contains. Nothing here is parsed from source
+# text: every constant that the project's modules add to the environment is
+# listed, including private, attributed and auxiliary ones, with its axioms.
+QUERY = r"""
+import DetComplexity
+open DetComplexity
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  for (n, ci) in env.constants.toList do
+    let some idx := env.getModuleIdxFor? n | continue
+    let mod := env.header.moduleNames[idx.toNat]!
+    unless (`DetComplexity).isPrefixOf mod do continue
+    let kind := match ci with
+      | .thmInfo _ => "theorem" | .defnInfo _ => "def" | .axiomInfo _ => "axiom"
+      | .opaqueInfo _ => "opaque" | .inductInfo _ => "inductive" | .ctorInfo _ => "ctor"
+      | .recInfo _ => "rec" | .quotInfo _ => "quot"
+    let axs ← collectAxioms n
+    let hidden := n.isInternalDetail || (privateToUserName? n).isSome
+    let doc := ((← findDocString? env n).getD "").splitOn "\n" |>.head!
+    let ty ← liftTermElabM (ppExpr ci.type)
+    let val ← match ci with
+      | .defnInfo d => do pure ((← liftTermElabM (ppExpr d.value)).pretty 1000000)
+      | _ => pure ""
+    logInfo m!"DECL¦{n}¦{kind}¦{mod}¦{axs.toList}¦{hidden}¦{ty.pretty 1000000}¦{val}¦{doc}¦END"
+"""
 
-def axioms(names):
+def declarations():
+    """Every constant the project adds to the Lean environment, as reported by Lean."""
     env = dict(os.environ, PATH=f"{Path.home()}/.elan/bin:" + os.environ["PATH"])
     with tempfile.NamedTemporaryFile("w", suffix=".lean", delete=False) as t:
-        t.write("import DetComplexity\nopen DetComplexity\n" + "".join(f"#print axioms {n}\n" for n in names))
-        t.write("open Lean Elab Command in\nrun_cmd do\n  for n in [" + ", ".join(f"`DetComplexity.{n}" for n in names) + "] do\n"
-                "    let ci ← getConstInfo n\n    let fmt ← liftTermElabM (Meta.ppExpr ci.type)\n"
-                "    logInfo m!\"LOCK|{n}|{fmt.pretty 1000000}\"\n")
+        t.write(QUERY)
     r = subprocess.run(["lake", "env", "lean", t.name], cwd=ROOT, env=env, capture_output=True, text=True)
     os.unlink(t.name)
-    res = {}
-    for m in re.finditer(r"'DetComplexity\.(\S+)' (does not depend on any axioms|depends on axioms: \[([^\]]*)\])", r.stdout):
-        res[m[1]] = set(a.strip() for a in (m[3] or "").split(",") if a.strip())
-    types = {m[1]: " ".join(m[2].split()) for m in re.finditer(r"LOCK\|DetComplexity\.(\S+?)\|(.*)", r.stdout)}
-    missing = [n for n in names if n not in res or n not in types]
-    if missing:
-        sys.exit(f"could not read axioms/statements for {missing}\n{r.stdout[-800:]}{r.stderr[-400:]}")
-    return res, types
+    out = []
+    for m in re.finditer(r"DECL¦(.*?)¦(\w+)¦(.*?)¦\[(.*?)\]¦(true|false)¦(.*?)¦(.*?)¦(.*?)¦END", r.stdout, re.S):
+        full, kind, mod, axs, hidden, ty, val, doc = m.groups()
+        out.append(dict(full=full, name=full[len("DetComplexity."):] if full.startswith("DetComplexity.") else full,
+                        kind=kind, module=mod, file=mod.replace(".", "/") + ".lean",
+                        axioms=set(a.strip() for a in axs.split(",") if a.strip()), hidden=hidden == "true",
+                        type=" ".join(ty.split()), value=" ".join(val.split()), doc=doc.strip(),
+                        open=".Open." in mod + "."))
+    if r.returncode != 0 or not out:
+        sys.exit(f"could not query the Lean environment\n{r.stdout[-800:]}{r.stderr[-400:]}")
+    return sorted(out, key=lambda d: (d["file"], d["name"]))
 
 def statement_changes(types):
     """Compare statements with the lock file at the base commit."""
     base = os.environ.get("STATEMENT_BASE", "HEAD")
     r = subprocess.run(["git", "show", f"{base}:statements.lock"], cwd=ROOT, capture_output=True, text=True)
     if r.returncode != 0:
+        print(f"LOCK: no statements.lock at {base}; comparison skipped")
         return []
     old = dict(line.split(" :: ", 1) for line in r.stdout.splitlines() if " :: " in line)
     out = [f"statement of {n} changed" for n in old if n in types and types[n] != old[n]]
@@ -72,24 +94,29 @@ def statement_changes(types):
 def main():
     check = "--check" in sys.argv
     decls = declarations()
-    ax, types = axioms([d["name"] for d in decls])
+    public = [d for d in decls if not d["hidden"] and d["kind"] in ("theorem", "def", "inductive", "axiom", "opaque")]
+    types = {d["name"]: d["type"] + (" := " + d["value"] if d["kind"] == "def" else "") for d in public}
     lock = "".join(f"{n} :: {types[n]}\n" for n in sorted(types))
     lock_path = ROOT / "statements.lock"
     lock_stale = not lock_path.exists() or lock_path.read_text() != lock
-    changes = statement_changes(types)
-    lock_path.write_text(lock)
     problems = []
+    changes = statement_changes(types)
     if changes and os.environ.get("ALLOW_STATEMENT_CHANGE") != "1":
-        problems += [c + " (statement changes need their own reviewed PR; set ALLOW_STATEMENT_CHANGE=1 there)" for c in changes]
-    for d in decls:
-        a = ax[d["name"]]
-        d["proved"] = "sorryAx" not in a
-        if not d["open"] and not d["proved"]:
-            problems.append(f"{d['name']} ({d['file']}) depends on sorry but is outside Open/")
-        if not d["open"] and a - STANDARD - {"sorryAx"}:
-            problems.append(f"{d['name']} uses non-standard axioms {sorted(a - STANDARD)}")
+        problems += [c + " (statement and definition changes need their own reviewed PR; set ALLOW_STATEMENT_CHANGE=1 there)" for c in changes]
+    for d in decls:  # every constant, hidden or not
+        a = d["axioms"]
+        if d["kind"] in ("axiom", "opaque"):
+            problems.append(f"{d['full']} ({d['file']}) is declared as {d['kind']}")
+        if a - STANDARD - {"sorryAx"}:
+            problems.append(f"{d['full']} ({d['file']}) uses non-standard axioms {sorted(a - STANDARD)}")
+        if not d["open"] and "sorryAx" in a:
+            problems.append(f"{d['full']} ({d['file']}) depends on sorry but is outside Open/")
+    theorems = [d for d in public if d["kind"] == "theorem"]
+    for d in theorems:
+        d["proved"] = "sorryAx" not in d["axioms"]
         if d["open"] and d["proved"]:
             problems.append(f"{d['name']} is proved: move it out of DetComplexity/Open/")
+    decls = theorems
     proved = {d["name"] for d in decls if d["proved"] and not d["open"]}
     certs_ok, best_cert = verify_data.main()
     if not certs_ok:
@@ -122,7 +149,7 @@ def main():
     tasks = []
     for d in decls:
         if d["open"]:
-            m = re.match(r"TASK (\S+) \| (\w+) \| (.*)", d["doc"].splitlines()[0] if d["doc"] else "")
+            m = re.match(r"TASK (\S+) \| (\w+) \| (.*)", d["doc"])
             if not m:
                 problems.append(f"{d['name']} in Open/ lacks a 'TASK id | difficulty | title' docstring line")
                 continue
@@ -130,10 +157,14 @@ def main():
     for tid, diff, title, d in sorted(tasks):
         L.append(f"| {tid} | {diff} | {title} | `{d['name']}` | `{d['file']}` |")
     L += ["", f"### Proved ({len(proved)} theorems, standard axioms only)", ""]
+    L += ["Names only: what each one says is in `statements.lock`, printed by Lean. Descriptions written by",
+          "authors are deliberately not shown here, because the machine cannot check them.", ""]
+    by_file = {}
     for d in decls:
         if d["name"] in proved:
-            first = d["doc"].splitlines()[0].strip() if d["doc"] else ""
-            L.append(f"- `{d['name']}` ({d['file']}){': ' + first if first else ''}")
+            by_file.setdefault(d["file"], []).append(d["name"])
+    for f in sorted(by_file):
+        L.append(f"- `{f}`: " + ", ".join(f"`{n}`" for n in sorted(by_file[f])))
     START, END = "<!-- BOARD:START -->", "<!-- BOARD:END -->"
     path = ROOT / "README.md"
     readme = path.read_text()
@@ -141,8 +172,10 @@ def main():
         sys.exit("README.md lacks the BOARD:START / BOARD:END markers")
     new = readme[:readme.index(START) + len(START)] + "\n" + "\n".join(L) + "\n" + readme[readme.index(END):]
     stale = new != readme or lock_stale
-    path.write_text(new)
-    print(f"BOARD: {len(proved)} proved, {len(tasks)} open tasks" + (" (README.md / statements.lock updated)" if stale else ""))
+    if not problems:  # never overwrite the lock or the board with a state that failed
+        path.write_text(new)
+        lock_path.write_text(lock)
+    print(f"BOARD: {len(proved)} proved, {len(tasks)} open tasks" + (" (README.md / statements.lock updated)" if stale and not problems else ""))
     for p in problems:
         print("PROBLEM:", p)
     if check and stale:

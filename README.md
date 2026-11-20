@@ -51,24 +51,12 @@ Claim one by opening an issue or draft PR named after its id. See `CONTRIBUTING.
 
 ### Proved (18 theorems, standard axioms only)
 
-- `totalDegree_det_le` (DetComplexity/Basic.lean): Key lemma: the determinant of an `n × n` affine matrix has total degree
-- `totalDegree_le_of_hasDetRep` (DetComplexity/Basic.lean): Any determinantal representation is at least as large as the degree.
-- `totalDegree_le_detComplexity` (DetComplexity/Basic.lean): **Degree lower bound.** If `p` has any determinantal representation,
-- `detComplexity_le_of_hasDetRep` (DetComplexity/Basic.lean): Any determinantal representation bounds `dc` from above. This is how every
-- `totalDegree_perm` (DetComplexity/Permanent.lean): The permanent has total degree exactly `n`: it is homogeneous of degree `n`
-- `n_le_detComplexity_perm` (DetComplexity/Permanent.lean): `dc(perm_n) ≥ n`.
-- `n_le_detComplexity_perm'` (DetComplexity/Permanent.lean): **`dc(perm_n) ≥ n`, unconditional** (uses universality).
-- `detComplexity_perm_two` (DetComplexity/Permanent.lean): **`dc(perm_2) = 2`.** Upper bound: `perm_2 = det [[x00, -x01], [x10, x11]]`
-- `hasDetRep_of_matrix` (DetComplexity/Universality.lean): A determinantal representation indexed by any finite type gives one of
-- `hasSchurRep_C` (DetComplexity/Universality.lean)
-- `HasSchurRep.add` (DetComplexity/Universality.lean)
-- `HasSchurRep.mul_X` (DetComplexity/Universality.lean)
-- `hasSchurRep` (DetComplexity/Universality.lean)
-- `exists_hasDetRep` (DetComplexity/Universality.lean): **Universality.** Every polynomial is the determinant of a square matrix of
-- `hasDetRep_detComplexity` (DetComplexity/Universality.lean): `dc p` is attained: `p` has a determinantal representation of size `dc p`.
-- `totalDegree_le_detComplexity'` (DetComplexity/Universality.lean): **Degree lower bound, unconditional.**
-- `totalDegree_bind₁_le_one` (DetComplexity/Universality.lean): Substituting affine polynomials into an affine polynomial gives an affine polynomial.
-- `detComplexity_bind₁_le` (DetComplexity/Universality.lean): **dc does not increase under affine substitution.** Substitute into every
+Names only: what each one says is in `statements.lock`, printed by Lean. Descriptions written by
+authors are deliberately not shown here, because the machine cannot check them.
+
+- `DetComplexity/Basic.lean`: `detComplexity_le_of_hasDetRep`, `totalDegree_det_le`, `totalDegree_le_detComplexity`, `totalDegree_le_of_hasDetRep`
+- `DetComplexity/Permanent.lean`: `detComplexity_perm_two`, `n_le_detComplexity_perm`, `n_le_detComplexity_perm'`, `totalDegree_perm`
+- `DetComplexity/Universality.lean`: `HasSchurRep.add`, `HasSchurRep.mul_X`, `detComplexity_bind₁_le`, `exists_hasDetRep`, `hasDetRep_detComplexity`, `hasDetRep_of_matrix`, `hasSchurRep`, `hasSchurRep_C`, `totalDegree_bind₁_le_one`, `totalDegree_le_detComplexity'`
 <!-- BOARD:END -->
 
 ## Roadmap
