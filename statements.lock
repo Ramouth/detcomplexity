@@ -1,0 +1,27 @@
+HasDetRep.succ :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} {p : MvPolynomial σ R} {m : ℕ}, HasDetRep p m → HasDetRep p (m + 1)
+HasSchurRep.add :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} {p q : MvPolynomial σ R}, HasSchurRep p → HasSchurRep q → HasSchurRep (p + q)
+HasSchurRep.mul_X :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} {p : MvPolynomial σ R}, HasSchurRep p → ∀ (x : σ), HasSchurRep (p * MvPolynomial.X x)
+detComplexity_C_le :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} (a : R), detComplexity (MvPolynomial.C a) ≤ 1
+detComplexity_X :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} [Nontrivial R] (i : σ), detComplexity (MvPolynomial.X i) = 1
+detComplexity_bind₁_le :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} {τ : Type u_3} (f : σ → MvPolynomial τ R), (∀ (i : σ), (f i).totalDegree ≤ 1) → ∀ (p : MvPolynomial σ R), detComplexity ((MvPolynomial.bind₁ f) p) ≤ detComplexity p
+detComplexity_le_of_hasDetRep :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} {p : MvPolynomial σ R} {m : ℕ}, HasDetRep p m → detComplexity p ≤ m
+detComplexity_mul_le :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} (p q : MvPolynomial σ R), detComplexity (p * q) ≤ detComplexity p + detComplexity q
+detComplexity_perm_le :: ∀ {R : Type u_1} [inst : CommRing R] (n : ℕ), detComplexity (perm R n) ≤ 2 ^ n - 1
+detComplexity_perm_two :: ∀ {R : Type u_1} [inst : CommRing R] [Nontrivial R], detComplexity (perm R 2) = 2
+det_one_sub_of_rank_lt :: ∀ {A : Type u_4} [inst : CommRing A] {ι : Type u_5} [inst_1 : Fintype ι] [inst_2 : DecidableEq ι] (N : Matrix ι ι A) (r : ι → ℕ), (∀ (i j : ι), N i j ≠ 0 → r i < r j) → (1 - N).det = 1
+exists_hasDetRep :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} (p : MvPolynomial σ R), ∃ m, HasDetRep p m
+hasDetRep_detComplexity :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} (p : MvPolynomial σ R), HasDetRep p (detComplexity p)
+hasDetRep_of_matrix :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} {ι : Type u_3} [inst_1 : Fintype ι] [inst_2 : DecidableEq ι] (A : Matrix ι ι (MvPolynomial σ R)), IsAffineMatrix A → HasDetRep A.det (Fintype.card ι)
+hasDetRep_of_solve :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} {ι : Type u_4} [inst_1 : Fintype ι] [inst_2 : DecidableEq ι] (T : Matrix ι ι (MvPolynomial σ R)) (u v w : ι → MvPolynomial σ R) (c : MvPolynomial σ R), (∀ (i j : ι), (T i j).totalDegree ≤ 1) → (∀ (i : ι), (v i).totalDegree ≤ 1) → (∀ (i : ι), (w i).totalDegree ≤ 1) → c.totalDegree ≤ 1 → T.det = 1 → Matrix.vecMul u T = w → HasDetRep (c - u ⬝ᵥ v) (Fintype.card ι + 1)
+hasSchurRep :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} (p : MvPolynomial σ R), HasSchurRep p
+hasSchurRep_C :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} (a : R), HasSchurRep (MvPolynomial.C a)
+n_le_detComplexity_perm :: ∀ (R : Type u_1) [inst : CommRing R] [Nontrivial R] (n : ℕ), (∃ m, HasDetRep (perm R n) m) → n ≤ detComplexity (perm R n)
+n_le_detComplexity_perm' :: ∀ (R : Type u_1) [inst : CommRing R] [Nontrivial R] (n : ℕ), n ≤ detComplexity (perm R n)
+permanent_expand_last_row :: ∀ {A : Type u_4} [inst : CommRing A] {n : ℕ} (M : Matrix (Fin (n + 1)) (Fin (n + 1)) A), M.permanent = ∑ j, M (Fin.last n) j * (M.submatrix Fin.castSucc j.succAbove).permanent
+sq_le_two_mul_detComplexity_perm :: ∀ (K : Type u_4) [inst : Field K] [CharZero K] (n : ℕ), n ^ 2 ≤ 2 * detComplexity (perm K n)
+totalDegree_bind₁_le_one :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} {τ : Type u_3} (f : σ → MvPolynomial τ R), (∀ (i : σ), (f i).totalDegree ≤ 1) → ∀ (q : MvPolynomial σ R), q.totalDegree ≤ 1 → ((MvPolynomial.bind₁ f) q).totalDegree ≤ 1
+totalDegree_det_le :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} {n : Type u_3} [inst_1 : Fintype n] [inst_2 : DecidableEq n] (A : Matrix n n (MvPolynomial σ R)), IsAffineMatrix A → A.det.totalDegree ≤ Fintype.card n
+totalDegree_le_detComplexity :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} (p : MvPolynomial σ R), (∃ m, HasDetRep p m) → p.totalDegree ≤ detComplexity p
+totalDegree_le_detComplexity' :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} (p : MvPolynomial σ R), p.totalDegree ≤ detComplexity p
+totalDegree_le_of_hasDetRep :: ∀ {R : Type u_1} [inst : CommRing R] {σ : Type u_2} {p : MvPolynomial σ R} {m : ℕ}, HasDetRep p m → p.totalDegree ≤ m
+totalDegree_perm :: ∀ (R : Type u_1) [inst : CommRing R] [Nontrivial R] (n : ℕ), (perm R n).totalDegree = n

@@ -6,6 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: leanprover/lean-action@v1
         with:
           use-mathlib-cache: true
@@ -15,3 +17,6 @@ jobs:
           python-version: "3.12"
       - run: pip install sympy
       - run: tools/check.sh --check
+        env:
+          STATEMENT_BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || 'HEAD~1' }}
+          ALLOW_STATEMENT_CHANGE: ${{ contains(github.event.pull_request.labels.*.name, 'statement-change') && '1' || '0' }}
