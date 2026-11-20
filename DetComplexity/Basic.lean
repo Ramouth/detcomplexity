@@ -64,6 +64,6 @@ theorem totalDegree_le_of_hasDetRep {p : MvPolynomial σ R} {m : ℕ}
 then `totalDegree p ≤ dc p`. -/
 theorem totalDegree_le_detComplexity (p : MvPolynomial σ R)
     (hp : ∃ m, HasDetRep p m) : p.totalDegree ≤ detComplexity p :=
-  totalDegree_le_of_hasDetRep (Nat.sInf_mem hp)
+  totalDegree_le_of_hasDetRep (Nat.sInf_mem (s := {m | HasDetRep p m}) hp)
 
 end DetComplexity
