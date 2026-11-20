@@ -13,26 +13,24 @@ first scoreboard of Geometric Complexity Theory. Read README.md for context.
    fails, stop and report.
 4. Run `lake build`.
 
-## Task order
+## What to work on
 
-1. **Make `DetComplexity/Basic.lean` compile with no `sorry`.** It was
-   drafted without access to a compiler, so lemma names (for example
-   `Units.neg_smul`, `totalDegree_finsetSum`, `Nat.sInf_mem`) may need fixing.
-   Keep the theorem *statements* unchanged; only change proofs. If a
-   statement is genuinely wrong, stop and explain before changing it.
-2. **Tier 1:** prove `totalDegree_perm` in `DetComplexity/Permanent.lean`.
-3. Then stop and report. Do not start Tier 2 or later without the user's go-ahead.
+`BOARD.md` is the state of the project, generated from the code. Open tasks are
+the theorems in `DetComplexity/Open/`. `CONTRIBUTING.md` has the procedure;
+follow it exactly, including moving a proved theorem out of `Open/`.
+
+Take one task at a time. Do not start a task marked `hard` without the user's
+go-ahead; propose a split into smaller tasks instead.
 
 ## Rules
 
-- Never leave `sorry`, `admit` or new `axiom`s in finished work. Check with
-  `grep -rn "sorry\|admit\|axiom" DetComplexity/`.
-- Before calling something done, run `#print axioms` on the main theorems.
-  Only `propext`, `Classical.choice` and `Quot.sound` are acceptable.
-- Don't weaken statements to make proofs go through.
+- `sorry` is allowed only in `DetComplexity/Open/`. No `admit`, no new `axiom`.
+- `tools/check.sh` must pass before every commit. It checks axioms for you.
+- Never change or weaken a statement to make a proof go through. If a
+  statement is wrong, stop and explain.
 - Commit after each theorem that compiles, with a message naming the theorem.
-- At the end, report: what compiled, what you had to change, how long it
-  took, and where you got stuck. That report is the actual experiment result.
+- End with a report: what was proved, what had to change, how long it took,
+  where you got stuck, and anything in the repo that slowed you down.
 
 ## Working method: compute first, reason second
 

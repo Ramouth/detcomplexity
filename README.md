@@ -42,11 +42,11 @@ affine-linear polynomials.
 - **Side track:** an open database of computed Kronecker/plethysm
   coefficients for small cases, with reproducible code.
 
-## Running it
+## Where things are
 
-See `CLAUDE.md` for the local agent. For humans:
-
-```
-lake exe cache get
-lake build
-```
+- `BOARD.md`: the scoreboard and the list of open tasks, generated from the code.
+- `CONTRIBUTING.md`: how to take a task, add a certificate, or add a task.
+- `DetComplexity/`: the Lean library. `DetComplexity/Open/` holds the open tasks.
+- `data/`: certificates (explicit matrices, machine-verified) and literature bounds.
+- `experiments/`: executable small-case versions of constructions, written before the proofs.
+- `tools/check.sh`: the referee.

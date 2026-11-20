@@ -1,20 +1,16 @@
 #!/usr/bin/env bash
-# One-shot referee: build, show only errors/warnings that matter, scan for
-# sorry/admit/axiom, and print the axioms behind every theorem in DetComplexity/.
-# Usage: tools/check.sh            (exit 0 = clean)
+# The referee. One command, short output, exit 0 only if everything holds:
+#   build passes; `sorry` appears only under DetComplexity/Open/; no `axiom`;
+#   every certificate verifies; every theorem's status matches where it lives;
+#   BOARD.md is regenerated from the code.
+# Usage: tools/check.sh [--check]   (--check also fails on a stale BOARD.md; used by CI)
 export PATH="$HOME/.elan/bin:$PATH"
 cd "$(dirname "$0")/.." || exit 2
-status=0
 out=$(lake build 2>&1); rc=$?
-echo "$out" | grep -E "^(error|warning):|error:|sorry" | grep -v "module system" | head -40
-if [ $rc -ne 0 ]; then echo "BUILD: FAILED"; exit 1; fi
+if [ $rc -ne 0 ]; then echo "$out" | grep -E "error" -A8 | cut -c1-300 | head -40; echo "BUILD: FAILED"; exit 1; fi
 echo "BUILD: ok"
-if grep -rnE "\b(sorry|admit)\b|^\s*axiom\b" DetComplexity/; then echo "GAPS: found"; status=1; else echo "GAPS: none"; fi
-tmp=$(mktemp --suffix=.lean)
-{ echo "import DetComplexity"; echo "open DetComplexity"
-  grep -rhoE "^(theorem|lemma) [A-Za-z_0-9'.]+( *$| +[[({:])" DetComplexity/ | awk '{print "#print axioms " $2}'; } > "$tmp"
-ax=$(lake env lean "$tmp" 2>&1); rm -f "$tmp"
-bad=$(echo "$ax" | grep -v "depends on axioms: \[propext, Classical.choice, Quot.sound\]" | grep -v "does not depend on any axioms" | grep -vE "depends on axioms: \[(propext|Classical.choice|Quot.sound)(, (propext|Classical.choice|Quot.sound))*\]")
-n=$(echo "$ax" | grep -c "axioms")
-if [ -n "$bad" ]; then echo "AXIOMS: problem"; echo "$bad" | head -20; status=1; else echo "AXIOMS: $n theorems, standard only"; fi
+status=0
+if grep -rnE "\b(sorry|admit)\b" DetComplexity/ --include=*.lean | grep -v "^DetComplexity/Open/" | grep -vE "^[^:]+:[0-9]+:\s*(--|/-|[^:]*\`sorry\`)"; then echo "GAPS: sorry outside Open/"; status=1; else echo "GAPS: none outside Open/"; fi
+if grep -rnE "^\s*axiom\b" DetComplexity/; then echo "AXIOM: declared"; status=1; fi
+python3 tools/board.py "$@" || status=1
 exit $status
