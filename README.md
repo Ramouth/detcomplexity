@@ -23,17 +23,18 @@ affine-linear polynomials.
 
 | Bound on dc(perm_n)            | Status in math        | Status here |
 |--------------------------------|-----------------------|-------------|
-| ≥ n (degree bound)             | folklore              | proved for any p (perm part: Tier 1) |
-| ≤ 2ⁿ − 1 (Grenet 2011)         | known                 | Tier 2 |
+| every p has a representation   | Valiant 1979          | **proved** (`exists_hasDetRep`) |
+| ≥ n (degree bound)             | folklore              | **proved**, unconditional (`n_le_detComplexity_perm'`) |
+| ≤ 2ⁿ − 1 (Grenet 2011)         | known                 | Tier 2b: construction tested for n ≤ 4 in `experiments/grenet.py`, not yet in Lean |
 | ≥ n²/2 (Mignon–Ressayre 2004)  | best known, char 0    | Tier 3 |
 | superpolynomial ⇒ VP ≠ VNP     | open                  | the goal |
 
 ## Roadmap
 
-- **Tier 0 (done, pending compile):** definitions; `totalDegree p ≤ dc p`.
-- **Tier 1:** `totalDegree (perm n) = n`, so `dc(perm_n) ≥ n` with no `sorry`.
-- **Tier 2:** Valiant universality (every polynomial has *some* determinantal
-  representation), which removes the `∃ m` hypothesis; Grenet's upper bound.
+- **Tier 0 (done):** definitions; `totalDegree p ≤ dc p`.
+- **Tier 1 (done):** `totalDegree (perm n) = n`, so `dc(perm_n) ≥ n` with no `sorry`.
+- **Tier 2a (done):** universality, so the `∃ m` hypothesis is gone.
+- **Tier 2b:** Grenet's upper bound `dc(perm_n) ≤ 2ⁿ − 1`.
 - **Tier 3:** Mignon–Ressayre via the Hessian rank argument. This is
   research-grade formalization.
 - **Tier 4:** GCT proper: orbit closures, occurrence/multiplicity
