@@ -33,3 +33,19 @@ first scoreboard of Geometric Complexity Theory. Read README.md for context.
 - Commit after each theorem that compiles, with a message naming the theorem.
 - At the end, report: what compiled, what you had to change, how long it
   took, and where you got stuck. That report is the actual experiment result.
+
+## Working method: compute first, reason second
+
+Keep reasoning out of prose wherever a cheap command can answer instead.
+
+- `tools/check.sh` is the referee: build, gap scan, axiom check, in a few lines.
+  Run it before every commit; never report "done" from memory.
+- `tools/find.sh <regex> [subdir]` and `tools/show.sh <name>` look lemmas up in
+  the mathlib source. Do not guess lemma names.
+- `tools/try.sh <scratch.lean>` asks Lean directly (`exact?`, `simp?`, `#check`).
+  Keep scratch files outside `DetComplexity/`.
+- Before formalizing any construction, write it as an executable spec in
+  `experiments/` (sympy) and test it on small cases. The Lean proof then
+  follows a construction already known to be right, and the invariant in the
+  script's docstring is the proof plan. Current specs:
+  `experiments/universality.py` (Tier 2a), `experiments/grenet.py` (Tier 2b).
