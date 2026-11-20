@@ -1,4 +1,4 @@
-"""Executable spec for Tier 2b (Grenet 2011): dc(perm_n) <= 2^n - 1.
+"""Executable spec for task T-007 (Grenet 2011): dc(perm_n) <= 2^n - 1.
 
 Vertices: subsets S of {0..n-1}, with the empty set and the full set identified.
 Edge S -> S + {j} (j not in S) has weight x[|S|][j].  Every other vertex gets a

@@ -1,15 +1,20 @@
 /-
 # Determinantal complexity: definition and the degree lower bound
 
-Geometric Complexity Theory (Mulmuley–Sohoni) attacks VP ≠ VNP, the algebraic
-cousin of P ≠ NP, through the *permanent versus determinant* problem:
-how large must a matrix of affine-linear polynomials be so that its
-determinant equals the n×n permanent?
+The *permanent versus determinant* problem (Valiant) asks how large a matrix of
+affine-linear polynomials must be so that its determinant equals the n×n
+permanent. That minimal size is the *determinantal complexity* `dc(p)`.
 
-That minimal size is the *determinantal complexity* `dc(p)`.
 This file proves the most basic lower bound: `totalDegree p ≤ dc p`.
-For the permanent that gives `dc(perm_n) ≥ n`. The best known bound is
-about n²/2 (Mignon–Ressayre 2004); VP ≠ VNP needs superpolynomial.
+For the permanent that gives `dc(perm_n) ≥ n`. The best known general bound is
+about n²/2, in characteristic 0 (Mignon–Ressayre 2004). Away from
+characteristic 2, a superpolynomial lower bound on `dc(perm_n)` would separate
+VNP from the class of polynomials with small formulas (VP_e); separating VNP
+from VP itself needs slightly more, a bound beyond n^(c log n). In
+characteristic 2 the permanent equals the determinant and `dc(perm_n) = n`.
+
+Geometric Complexity Theory (Mulmuley–Sohoni) studies the limiting ("border")
+version of `dc`, which is a different quantity from the one defined here.
 -/
 import Mathlib
 
@@ -30,8 +35,9 @@ def HasDetRep (p : MvPolynomial σ R) (m : ℕ) : Prop :=
   ∃ A : Matrix (Fin m) (Fin m) (MvPolynomial σ R), IsAffineMatrix A ∧ A.det = p
 
 /-- Determinantal complexity: the smallest size of a determinantal
-representation (`0` by convention if none exists; Valiant's universality
-theorem says one always exists, see the roadmap). -/
+representation. One always exists (`exists_hasDetRep`). Size 0 is allowed, and
+the empty determinant is 1, so `dc 1 = 0`; the literature usually starts at
+size 1. -/
 noncomputable def detComplexity (p : MvPolynomial σ R) : ℕ :=
   sInf {m | HasDetRep p m}
 

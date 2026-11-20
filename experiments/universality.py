@@ -1,4 +1,4 @@
-"""Executable spec for Tier 2a (Valiant universality), checked before formalizing.
+"""Executable spec for `exists_hasDetRep` (every polynomial is a determinant), checked before formalizing.
 
 Invariant W(p): there are T (k x k), S with T*S = I, det T = 1, vectors v, w and
 a scalar c, all of T, v, w, c affine-linear, with  p = c - w . (S v).

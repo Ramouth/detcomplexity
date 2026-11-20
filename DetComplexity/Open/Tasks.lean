@@ -40,18 +40,22 @@ theorem HasDetRep.succ {p : MvPolynomial σ R} {m : ℕ} (h : HasDetRep p m) :
     HasDetRep p (m + 1) := by
   sorry
 
-/-- TASK T-007 | medium | Grenet's upper bound: dc(perm_n) ≤ 2^n - 1 (assembly)
-Assemble from T-009, T-010 and T-011, following `experiments/grenet_split.py`
-line by line: index set = nonempty proper subsets, `u S = g S`, check `u ᵥ* T = w`
-and `c - u ⬝ᵥ v = perm`. No cycle covers and no matrix inverse are needed.
-Blocked until T-009, T-010, T-011 are proved. Source: Grenet 2011. -/
+/-- TASK T-007 | hard | Grenet's upper bound: dc(perm_n) ≤ 2^n - 1 (assembly)
+Needs one more split before it is medium. Plan, following
+`experiments/grenet_split.py`: index set = nonempty proper subsets, `u S = g S`,
+check `u ᵥ* T = w` and `c - u ⬝ᵥ v = perm`, using T-009, T-010, T-011. Missing
+pieces: (a) `n = 0` is a separate case (`perm R 0 = 1`, size 0); (b) T-011 is
+stated for `Fin (n + 1)`, while `g S` is a permanent over a column subset
+`S ⊆ Fin n`, so a bridging lemma is needed. Holds over any commutative ring.
+Source: Grenet, manuscript 2011 (stated there for characteristic ≠ 2). -/
 theorem detComplexity_perm_le (n : ℕ) : detComplexity (perm R n) ≤ 2 ^ n - 1 := by
   sorry
 
 /-- TASK T-009 | medium | A bordered matrix with a solved linear system is a representation
 If `det T = 1` and `u ᵥ* T = w` then `det [[T, v], [w, c]] = c - u ⬝ᵥ v`.
 The proof of `exists_hasDetRep` already does this with an explicit inverse;
-here `u = w T⁻¹` is given instead, so no inverse has to be exhibited. -/
+here `u = w T⁻¹` is given instead, so no inverse has to be exhibited
+(`det T = 1` makes `T` invertible; then `Matrix.det_fromBlocks₁₁`). -/
 theorem hasDetRep_of_solve {ι : Type*} [Fintype ι] [DecidableEq ι]
     (T : Matrix ι ι (MvPolynomial σ R)) (u v w : ι → MvPolynomial σ R) (c : MvPolynomial σ R)
     (hT : ∀ i j, (T i j).totalDegree ≤ 1) (hv : ∀ i, (v i).totalDegree ≤ 1)
@@ -60,9 +64,10 @@ theorem hasDetRep_of_solve {ι : Type*} [Fintype ι] [DecidableEq ι]
     HasDetRep (c - u ⬝ᵥ v) (Fintype.card ι + 1) := by
   sorry
 
-/-- TASK T-010 | medium | det (1 - N) = 1 when N strictly raises a rank
-If every nonzero entry `N i j` has `r i < r j`, then `1 - N` is unitriangular
-in a suitable order. Pure linear algebra; a candidate for mathlib itself. -/
+/-- TASK T-010 | easy | det (1 - N) = 1 when N strictly raises a rank
+If every nonzero entry `N i j` has `r i < r j`, then `1 - N` is block triangular
+with respect to `r` and every diagonal block is the identity; see
+`Matrix.BlockTriangular.det`. Pure linear algebra; a candidate for mathlib itself. -/
 theorem det_one_sub_of_rank_lt {A : Type*} [CommRing A] {ι : Type*} [Fintype ι] [DecidableEq ι]
     (N : Matrix ι ι A) (r : ι → ℕ) (h : ∀ i j, N i j ≠ 0 → r i < r j) :
     (1 - N).det = 1 := by

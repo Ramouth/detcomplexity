@@ -51,10 +51,10 @@ Literature bounds are not verified here. Sources and hypotheses: `data/literatur
 | T-002 | easy | A variable has dc exactly 1 | `detComplexity_X` | `DetComplexity/Open/Tasks.lean` |
 | T-003 | easy | dc is subadditive under products | `detComplexity_mul_le` | `DetComplexity/Open/Tasks.lean` |
 | T-004 | easy | Representations can be padded | `HasDetRep.succ` | `DetComplexity/Open/Tasks.lean` |
-| T-007 | medium | Grenet's upper bound: dc(perm_n) ≤ 2^n - 1 (assembly) | `detComplexity_perm_le` | `DetComplexity/Open/Tasks.lean` |
+| T-007 | hard | Grenet's upper bound: dc(perm_n) ≤ 2^n - 1 (assembly) | `detComplexity_perm_le` | `DetComplexity/Open/Tasks.lean` |
 | T-008 | hard | Mignon–Ressayre lower bound: dc(perm_n) ≥ n²/2 in characteristic 0 | `sq_le_two_mul_detComplexity_perm` | `DetComplexity/Open/Tasks.lean` |
 | T-009 | medium | A bordered matrix with a solved linear system is a representation | `hasDetRep_of_solve` | `DetComplexity/Open/Tasks.lean` |
-| T-010 | medium | det (1 - N) = 1 when N strictly raises a rank | `det_one_sub_of_rank_lt` | `DetComplexity/Open/Tasks.lean` |
+| T-010 | easy | det (1 - N) = 1 when N strictly raises a rank | `det_one_sub_of_rank_lt` | `DetComplexity/Open/Tasks.lean` |
 | T-011 | medium | Expansion of the permanent along the last row | `permanent_expand_last_row` | `DetComplexity/Open/Tasks.lean` |
 
 ### Proved (18 theorems, standard axioms only)
