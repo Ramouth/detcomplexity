@@ -1,4 +1,11 @@
-# DetComplexity: small, machine-checked steps on a hard problem
+# DetComplexity: small increments toward P versus NP
+
+**The point of this repository is to make progress on P versus NP in small,
+machine-checked increments that anyone, human or AI, can contribute.**
+
+Nobody here claims a proof, and no single contribution will be one. The bet is
+that a problem this hard yields to many small verified steps sooner than to
+one large unverified leap.
 
 > "The unknown thing to be known appeared to me as some stretch of earth or
 > hard marl, resisting penetration… the sea advances insensibly in silence,
@@ -15,12 +22,17 @@ each contribution raises the water by one checked step.
 
 ## The idea
 
-The permanent-versus-determinant problem is the algebraic cousin of P versus
-NP. It asks how large a determinant must be to express the n×n permanent; that
-size is the *determinantal complexity*, dc. Proving that it grows fast enough
-would separate two complexity classes. Progress has been slow for decades, in
-part because the work that would let many people contribute, building shared,
-checked foundations, earns little credit.
+P versus NP has an algebraic version, the permanent-versus-determinant
+problem: how large must a determinant be to express the n×n permanent? That
+size is the *determinantal complexity*, dc. Showing that it grows fast enough
+would separate the algebraic counterparts of P and NP, a separation that is
+believed to be a necessary step toward P ≠ NP itself. So every proved bound on
+dc, however small, is an increment in that direction, and it is a number that
+can be put on a scoreboard.
+
+Progress has been slow for decades, in part because the work that would let
+many people contribute, building shared and checked foundations, earns little
+credit.
 
 This repository tests a different way of working:
 
