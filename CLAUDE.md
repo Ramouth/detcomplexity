@@ -27,7 +27,9 @@ arguments or claimed solutions that the referee cannot check.
 - `sorry` only in `DetComplexity/Open/`. No `admit`, no `axiom`, no
   `native_decide`.
 - Never change or weaken a statement or a definition to make a proof go
-  through. If one is wrong, stop and explain.
+  through. If one is wrong, stop and explain. If the referee says a statement
+  changed and you are sure it did not, that is a referee bug: stop and report
+  it. Never set `ALLOW_STATEMENT_CHANGE` yourself.
 - **Always validate that the README is up to date before you finish.** Bring
   your branch up to date with `main`, run `tools/check.sh`, commit what it
   regenerated, then confirm `tools/check.sh --check` exits 0. Do this again if
@@ -54,7 +56,10 @@ Keep reasoning out of prose wherever a cheap command can answer instead.
 - `tools/find.sh <regex> [subdir]` and `tools/show.sh <name>` look lemmas up in
   the mathlib source. Do not guess lemma names.
 - `tools/try.sh scratch/<file>.lean` asks Lean directly (`exact?`, `simp?`,
-  `#check`). Scratch files live in `scratch/`, which git ignores.
+  `#check`). Scratch files live in `scratch/`, which git ignores. Start one
+  with `import DetComplexity`, then copy the `open`, `namespace` and `variable`
+  lines of the file you are working towards, or the statement will not be the
+  same one.
 - Before stating or formalizing a construction (an explicit object claimed to
   have a property, such as a matrix with a given determinant), write it as an
   executable spec in `experiments/` and test small cases. Routine lemmas do

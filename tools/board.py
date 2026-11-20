@@ -13,10 +13,13 @@ Rules enforced (exit 1 on violation):
   * no constant is an axiom, is opaque, or uses a non-standard axiom;
   * a theorem inside DetComplexity/Open/ must still be open (if you proved it, move it out);
   * no existing statement or definition may change or disappear, compared with
-    statements.lock at $STATEMENT_BASE (default HEAD), unless ALLOW_STATEMENT_CHANGE=1.
+    statements.lock at $STATEMENT_BASE (default: the merge-base with origin/main,
+    or HEAD without that remote), unless ALLOW_STATEMENT_CHANGE=1.
     The lock holds the readable statement and a hash of the fully elaborated
     term, so a change hidden from the pretty-printer (a local instance, an
-    implicit argument, a numeral type) is still a change;
+    implicit argument, a numeral type) is still a change. Only the hash is
+    compared. Binder names and universe names are normalised first, so moving
+    a theorem to another file does not count as a change;
   * literature bounds must not contradict verified ones.
 Usage: tools/board.py          regenerate the README block and statements.lock
        tools/board.py --check  write nothing; fail if either file is stale (CI)
@@ -41,6 +44,18 @@ LEAN_UPPER = [("detComplexity_perm_le", lambda n: 2 ** n - 1),
 QUERY = r"""
 import DetComplexity
 open DetComplexity
+
+/-- Erase binder names, which carry file-dependent generated parts. Binder kinds
+(explicit, implicit, instance) are kept. -/
+partial def BoardQuery.stripNames : Lean.Expr → Lean.Expr
+  | .forallE _ d b bi => .forallE .anonymous (stripNames d) (stripNames b) bi
+  | .lam _ d b bi => .lam .anonymous (stripNames d) (stripNames b) bi
+  | .letE _ t v b nd => .letE .anonymous (stripNames t) (stripNames v) (stripNames b) nd
+  | .app f a => .app (stripNames f) (stripNames a)
+  | .mdata _ e => stripNames e
+  | .proj s i e => .proj s i (stripNames e)
+  | e => e
+
 open Lean Elab Command Meta in
 run_cmd do
   let env ← getEnv
@@ -56,14 +71,20 @@ run_cmd do
     let axs ← collectAxioms n
     let hidden := n.isInternalDetail || (privateToUserName? n).isSome
     let doc := ((← findDocString? env n).getD "").splitOn "\n" |>.head!
-    let ty ← liftTermElabM (ppExpr ci.type)
+    -- Universe names depend on the file's `variable` lines: rename them by first occurrence.
+    let ps := (collectLevelParams {} ci.type).params
+    let ps := ps ++ (ci.levelParams.filter (!ps.contains ·)).toArray
+    let lv := (List.range ps.size).map fun i => Level.param (Name.mkSimple s!"u{i + 1}")
+    let norm := fun (e : Expr) => e.instantiateLevelParams ps.toList lv
+    let ty ← liftTermElabM (ppExpr (norm ci.type))
     let (val, rawVal) ← match ci with
-      | .defnInfo d => do pure (((← liftTermElabM (ppExpr d.value)).pretty 1000000), toString d.value)
+      | .defnInfo d => do pure (((← liftTermElabM (ppExpr (norm d.value))).pretty 1000000),
+                                toString (BoardQuery.stripNames (norm d.value)))
       | _ => pure ("", "")
     let j := Json.mkObj [("name", toJson n.toString), ("kind", toJson kind), ("module", toJson mod.toString),
       ("axioms", toJson (axs.toList.map (·.toString))), ("hidden", toJson hidden),
       ("type", toJson (ty.pretty 1000000)), ("value", toJson val),
-      ("raw", toJson (toString ci.levelParams ++ " " ++ toString ci.type ++ " := " ++ rawVal)), ("doc", toJson doc)]
+      ("raw", toJson (toString (BoardQuery.stripNames (norm ci.type)) ++ " := " ++ rawVal)), ("doc", toJson doc)]
     out := out ++ j.compress ++ "\n"
   IO.FS.writeFile "OUTPATH" out
 """
@@ -96,7 +117,10 @@ def declarations():
 
 def statement_changes(lock_now):
     """Compare statements and definitions with the lock file at the base commit. Fails closed."""
-    base = os.environ.get("STATEMENT_BASE", "HEAD")
+    base = os.environ.get("STATEMENT_BASE")
+    if not base:  # default: where this branch left main, so local runs judge what CI will judge
+        mb = subprocess.run(["git", "merge-base", "HEAD", "origin/main"], cwd=ROOT, capture_output=True, text=True)
+        base = mb.stdout.strip() if mb.returncode == 0 and mb.stdout.strip() else "HEAD"
     r = subprocess.run(["git", "show", f"{base}:statements.lock"], cwd=ROOT, capture_output=True, text=True)
     if r.returncode != 0:
         if os.environ.get("ALLOW_NO_BASE") == "1":
@@ -104,7 +128,9 @@ def statement_changes(lock_now):
             return []
         return [f"cannot read statements.lock at base '{base}' (set ALLOW_NO_BASE=1 only for a repository's first commit)"]
     old = dict(line.split(" :: ", 1) for line in r.stdout.splitlines() if " :: " in line)
-    out = [f"statement or definition of {n} changed" for n in old if n in lock_now and lock_now[n] != old[n]]
+    sha = lambda line: line.rsplit("[", 1)[-1]
+    out = [f"statement or definition of {n} changed\n    was: {old[n]}\n    now: {lock_now[n]}"
+           for n in old if n in lock_now and sha(lock_now[n]) != sha(old[n])]
     out += [f"{n} was removed" for n in old if n not in lock_now]
     return out
 

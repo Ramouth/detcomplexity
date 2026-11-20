@@ -9,7 +9,7 @@ set -o pipefail
 export PATH="$HOME/.elan/bin:$PATH"
 f=$(realpath "$1"); cd "$(dirname "$0")/.." || exit 2
 out=$(lake env lean "$f" 2>&1); rc=$?
-out=$(echo "$out" | sed "s|$f|scratch|g" | grep -v "module system" | cut -c1-600)
+out=$(echo "$out" | sed "s|$f|scratch|g" | grep -v "module system" | sed -E 's/^(.{600}).+$/\1 ...[line cut at 600 chars]/')
 n=$(echo "$out" | wc -l); echo "$out" | head -${2:-80}
 [ "$n" -gt "${2:-80}" ] && echo "... ($n lines in total; pass a larger max_lines)"
 exit $rc

@@ -37,8 +37,8 @@ A maintainer merges every PR. Nothing merges automatically.
 For Proof and Certificate PRs the maintainer does not read the mathematics.
 They check two mechanical things: the `referee` check is green, and the PR
 touches only the allowed files, which are `DetComplexity/**/*.lean`,
-`data/certificates/*.json`, the generated block in `README.md` and
-`statements.lock`. A PR that touches anything else is a Statement or Rules PR,
+`data/certificates/*.json`, the import list `DetComplexity.lean`, the generated
+block in `README.md` and `statements.lock`. A PR that touches anything else is a Statement or Rules PR,
 whatever it calls itself.
 
 Stage two (not built): an independent proof checker in a separate CI job, a
@@ -74,13 +74,19 @@ regenerated files.
    - `Universality.lean`: existence of representations and general closure
      properties of dc (products, substitution, padding);
    - `Permanent.lean`: anything about the permanent;
-   - a new file if none fits. Library files never import from `Open/`.
+   - `LinearAlgebra.lean` (create it if absent): general facts about matrices,
+     determinants and permanents that do not mention dc;
+   - a new file if none fits, imported from `DetComplexity.lean`. Library files
+     never import from `Open/`.
    Mind the `variable` lines: they differ between files, and a cut-and-paste can
-   silently change binders. The lock check will tell you.
+   silently change binders. Moving a theorem unchanged does not alter its lock
+   entry; if the referee reports a change it prints the old and new lines.
+   **If you are sure nothing changed and the referee still says so, stop and
+   report it as a referee bug. Never use `ALLOW_STATEMENT_CHANGE` to get past it.**
 4. Replace the `TASK ...` docstring with a one-line description of the result.
 5. Make helper lemmas `private` unless they are useful on their own. The
    number that matters is tasks closed, not theorems added.
-6. Update the scoreboard as described above.
+6. Update the scoreboard as described above, in the same commit as the proof.
 
 If you have no access to GitHub (many agents do not): do the same on a local
 branch, commit, and hand back the branch name together with the filled-in text
@@ -141,8 +147,11 @@ defines (including private and auxiliary ones) and exits 0 only if:
   of the full term and not only by how it prints;
 - every certificate verifies, and no literature bound contradicts a verified one.
 
-Without arguments it then regenerates the scoreboard and the lock. With
-`--check` (used by CI) it writes nothing and fails if either is stale.
+Without arguments it then regenerates the scoreboard and the lock; if it
+found problems it writes nothing. With `--check` (used by CI) it never writes
+and also fails if either file is stale. Statements are compared with the lock
+at the point where your branch left `origin/main`, the same comparison CI
+makes. A run takes about a minute, most of it loading mathlib.
 
 ## What it does not enforce
 
