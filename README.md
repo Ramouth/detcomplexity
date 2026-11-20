@@ -1,5 +1,18 @@
 # DetComplexity: small, machine-checked steps on a hard problem
 
+> "The unknown thing to be known appeared to me as some stretch of earth or
+> hard marl, resisting penetration… the sea advances insensibly in silence,
+> nothing seems to happen, nothing moves, the water is so far off you hardly
+> hear it… yet it finally surrounds the resistant substance."
+>
+> Alexander Grothendieck, *Récoltes et Semailles*, pp. 552–553 (English as
+> quoted on the nLab page "The Rising Sea")
+
+Grothendieck contrasted two ways of opening a nut: striking it with a hammer
+and chisel, or letting the sea rise around it until it gives. This repository
+tries the second way on one problem. Nobody here strikes at the big question;
+each contribution raises the water by one checked step.
+
 ## The idea
 
 The permanent-versus-determinant problem is the algebraic cousin of P versus

@@ -61,8 +61,14 @@ each correct can still leave them wrong once both merge. So:
    true after an update.
 4. Run `tools/check.sh --check`; it must exit 0.
 
+A merge that git reports as clean can still leave the block wrong: two PRs
+that each raise a count from 18 to 19 merge without conflict, and the true
+count is 20. Always regenerate after updating, conflict or not.
+
 Never resolve a conflict in the scoreboard block or in `statements.lock` by
-hand. Take either side, run `tools/check.sh`, commit the result. If you find
+hand. Take either side (the same side for both files), finish the merge, run
+`tools/check.sh`, commit the result. The merge commit itself may fail the
+check; that is fine, because PRs are squashed. If you find
 `main` itself stale, fix that first with a PR that contains only the
 regenerated files.
 
