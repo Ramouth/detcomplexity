@@ -47,4 +47,18 @@ theorem n_le_detComplexity_perm [Nontrivial R] (n : ℕ)
 theorem n_le_detComplexity_perm' [Nontrivial R] (n : ℕ) : n ≤ detComplexity (perm R n) :=
   n_le_detComplexity_perm R n (exists_hasDetRep _)
 
+variable {R} in
+/-- **`dc(perm_2) = 2`.** Upper bound: `perm_2 = det [[x00, -x01], [x10, x11]]`
+(certificate `data/certificates/perm2_size2.json`). Lower bound: degree. -/
+theorem detComplexity_perm_two [Nontrivial R] : detComplexity (perm R 2) = 2 := by
+  refine le_antisymm ?_ (n_le_detComplexity_perm' R 2)
+  refine detComplexity_le_of_hasDetRep
+    ⟨!![X (0, 0), -X (0, 1); X (1, 0), X (1, 1)], ?_, ?_⟩
+  · intro i j
+    fin_cases i <;> fin_cases j <;> simp [totalDegree_neg, totalDegree_X]
+  · have hu : (Finset.univ : Finset (Equiv.Perm (Fin 2))) = {1, Equiv.swap 0 1} := by decide
+    simp only [perm, Matrix.permanent]
+    rw [hu, Finset.sum_pair (by decide)]
+    simp [Matrix.det_fin_two, Fin.prod_univ_two, mul_comm]
+
 end DetComplexity

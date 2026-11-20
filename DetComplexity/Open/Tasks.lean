@@ -40,12 +40,6 @@ theorem HasDetRep.succ {p : MvPolynomial σ R} {m : ℕ} (h : HasDetRep p m) :
     HasDetRep p (m + 1) := by
   sorry
 
-/-- TASK T-005 | easy | dc(perm_2) = 2
-Upper bound: `perm_2 = det [[x00, -x01], [x10, x11]]`
-(certificate `data/certificates/perm2_size2.json`). Lower bound: degree. -/
-theorem detComplexity_perm_two [Nontrivial R] : detComplexity (perm R 2) = 2 := by
-  sorry
-
 /-- TASK T-006 | medium | dc does not increase under affine substitution
 Substitute into every matrix entry; an affine polynomial of affine polynomials
 is affine. This is what makes dc a measure of *projections*. -/
