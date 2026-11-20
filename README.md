@@ -49,7 +49,6 @@ Literature bounds are not verified here. Sources and hypotheses: `data/literatur
 |---|---|---|---|---|
 | T-001 | easy | Constants have dc at most 1 | `detComplexity_C_le` | `DetComplexity/Open/Tasks.lean` |
 | T-002 | easy | A variable has dc exactly 1 | `detComplexity_X` | `DetComplexity/Open/Tasks.lean` |
-| T-003 | easy | dc is subadditive under products | `detComplexity_mul_le` | `DetComplexity/Open/Tasks.lean` |
 | T-004 | easy | Representations can be padded | `HasDetRep.succ` | `DetComplexity/Open/Tasks.lean` |
 | T-007 | hard | Grenet's upper bound: dc(perm_n) ≤ 2^n - 1 (assembly) | `detComplexity_perm_le` | `DetComplexity/Open/Tasks.lean` |
 | T-008 | hard | Mignon–Ressayre lower bound: dc(perm_n) ≥ n²/2 in characteristic 0 | `sq_le_two_mul_detComplexity_perm` | `DetComplexity/Open/Tasks.lean` |
@@ -64,7 +63,7 @@ authors are deliberately not shown here, because the machine cannot check them.
 - `DetComplexity/Basic.lean`: `detComplexity_le_of_hasDetRep`, `totalDegree_det_le`, `totalDegree_le_detComplexity`, `totalDegree_le_of_hasDetRep`
 - `DetComplexity/LinearAlgebra.lean`: `det_one_sub_of_rank_lt`
 - `DetComplexity/Permanent.lean`: `detComplexity_perm_two`, `n_le_detComplexity_perm`, `n_le_detComplexity_perm'`, `totalDegree_perm`
-- `DetComplexity/Universality.lean`: `HasSchurRep.add`, `HasSchurRep.mul_X`, `detComplexity_bind₁_le`, `exists_hasDetRep`, `hasDetRep_detComplexity`, `hasDetRep_of_matrix`, `hasSchurRep`, `hasSchurRep_C`, `totalDegree_bind₁_le_one`, `totalDegree_le_detComplexity'`
+- `DetComplexity/Universality.lean`: `HasSchurRep.add`, `HasSchurRep.mul_X`, `detComplexity_bind₁_le`, `detComplexity_mul_le`, `exists_hasDetRep`, `hasDetRep_detComplexity`, `hasDetRep_of_matrix`, `hasSchurRep`, `hasSchurRep_C`, `totalDegree_bind₁_le_one`, `totalDegree_le_detComplexity'`
 <!-- BOARD:END -->
 
 ## Roadmap
@@ -86,6 +85,10 @@ The scoreboard lists what is open now. Beyond it:
 - `data/`: certificates (explicit matrices, machine-verified) and literature bounds.
 - `experiments/`: executable small-case versions of constructions, written before the proofs.
 - `tools/check.sh`: the referee.
+
+## Licence
+
+Apache-2.0, the same as mathlib. See `LICENSE`.
 
 ## Status and history
 

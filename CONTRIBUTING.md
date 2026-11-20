@@ -51,9 +51,15 @@ The README scoreboard and `statements.lock` are generated. Two PRs that are
 each correct can still leave them wrong once both merge. So:
 
 1. Before you open a PR, and again whenever `main` has moved, bring your branch
-   up to date with `main` (rebase or merge).
+   up to date with upstream: `git fetch origin`, then `git rebase origin/main`
+   if the PR is not open yet, or `git merge origin/main` once it is. Do not
+   rewrite commits a maintainer may already have seen.
 2. Run `tools/check.sh`. It regenerates both files from the code.
-3. Commit what it changed. Then run `tools/check.sh --check`; it must exit 0.
+3. Commit what it changed: into the proof commit before the PR is open, as a
+   follow-up commit `Regenerate scoreboard` afterwards. Maintainers squash on
+   merge, so `main` gets one commit per task either way. Keep commit messages
+   true after an update.
+4. Run `tools/check.sh --check`; it must exit 0.
 
 Never resolve a conflict in the scoreboard block or in `statements.lock` by
 hand. Take either side, run `tools/check.sh`, commit the result. If you find
@@ -86,7 +92,7 @@ regenerated files.
 4. Replace the `TASK ...` docstring with a one-line description of the result.
 5. Make helper lemmas `private` unless they are useful on their own. The
    number that matters is tasks closed, not theorems added.
-6. Update the scoreboard as described above, in the same commit as the proof.
+6. Update the scoreboard as described above.
 
 If you have no access to GitHub (many agents do not): do the same on a local
 branch, commit, and hand back the branch name together with the filled-in text
@@ -151,7 +157,8 @@ Without arguments it then regenerates the scoreboard and the lock; if it
 found problems it writes nothing. With `--check` (used by CI) it never writes
 and also fails if either file is stale. Statements are compared with the lock
 at the point where your branch left `origin/main`, the same comparison CI
-makes. A run takes about a minute, most of it loading mathlib.
+makes. A run takes one to three minutes (longer after a change to
+`Basic.lean`, which rebuilds everything); set command timeouts accordingly.
 
 ## What it does not enforce
 
@@ -168,7 +175,9 @@ Be honest about these; a reviewer may ask.
 ## Repository settings (for maintainers)
 
 - Protect `main`: require the `referee` check, forbid direct and force pushes,
-  require branches to be up to date before merging.
+  require branches to be up to date before merging. Squash-merge PRs.
+- For Proof PRs, also look at where the theorem was put (step 3); the referee
+  does not check placement.
 - Create the label `statement-change`. CI allows statement changes only on PRs
   carrying it; only people with triage rights can set it, and it must be set
   again after new commits are pushed.

@@ -111,6 +111,18 @@ theorem totalDegree_le_detComplexity' (p : MvPolynomial σ R) :
     p.totalDegree ≤ detComplexity p :=
   totalDegree_le_detComplexity p (exists_hasDetRep p)
 
+/-- dc is subadditive under products: `dc (p * q) ≤ dc p + dc q`, by a block-diagonal matrix. -/
+theorem detComplexity_mul_le (p q : MvPolynomial σ R) :
+    detComplexity (p * q) ≤ detComplexity p + detComplexity q := by
+  obtain ⟨A, hA, hdA⟩ := hasDetRep_detComplexity p
+  obtain ⟨B, hB, hdB⟩ := hasDetRep_detComplexity q
+  have hA' : ∀ i j, (A i j).totalDegree ≤ 1 := hA
+  have hB' : ∀ i j, (B i j).totalDegree ≤ 1 := hB
+  have h := hasDetRep_of_matrix (fromBlocks A 0 0 B)
+    (by rintro (i | i) (j | j) <;> simp [hA', hB'])
+  rw [det_fromBlocks_zero₂₁, hdA, hdB] at h
+  simpa using detComplexity_le_of_hasDetRep h
+
 -- The statements below are about `bind₁`, which mathlib now deprecates in favour of `aeval`.
 set_option linter.deprecated false in
 /-- Substituting affine polynomials into an affine polynomial gives an affine polynomial. -/
