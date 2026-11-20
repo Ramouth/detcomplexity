@@ -1,0 +1,9 @@
+name = "DetComplexity"
+defaultTargets = ["DetComplexity"]
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+
+[[lean_lib]]
+name = "DetComplexity"
