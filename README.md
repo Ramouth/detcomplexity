@@ -49,7 +49,6 @@ Literature bounds are not verified here. Sources and hypotheses: `data/literatur
 |---|---|---|---|---|
 | T-001 | easy | Constants have dc at most 1 | `detComplexity_C_le` | `DetComplexity/Open/Tasks.lean` |
 | T-002 | easy | A variable has dc exactly 1 | `detComplexity_X` | `DetComplexity/Open/Tasks.lean` |
-| T-003 | easy | dc is subadditive under products | `detComplexity_mul_le` | `DetComplexity/Open/Tasks.lean` |
 | T-004 | easy | Representations can be padded | `HasDetRep.succ` | `DetComplexity/Open/Tasks.lean` |
 | T-007 | hard | Grenet's upper bound: dc(perm_n) ≤ 2^n - 1 (assembly) | `detComplexity_perm_le` | `DetComplexity/Open/Tasks.lean` |
 | T-008 | hard | Mignon–Ressayre lower bound: dc(perm_n) ≥ n²/2 in characteristic 0 | `sq_le_two_mul_detComplexity_perm` | `DetComplexity/Open/Tasks.lean` |
@@ -57,14 +56,14 @@ Literature bounds are not verified here. Sources and hypotheses: `data/literatur
 | T-010 | easy | det (1 - N) = 1 when N strictly raises a rank | `det_one_sub_of_rank_lt` | `DetComplexity/Open/Tasks.lean` |
 | T-011 | medium | Expansion of the permanent along the last row | `permanent_expand_last_row` | `DetComplexity/Open/Tasks.lean` |
 
-### Proved (18 theorems, standard axioms only)
+### Proved (19 theorems, standard axioms only)
 
 Names only: what each one says is in `statements.lock`, printed by Lean. Descriptions written by
 authors are deliberately not shown here, because the machine cannot check them.
 
 - `DetComplexity/Basic.lean`: `detComplexity_le_of_hasDetRep`, `totalDegree_det_le`, `totalDegree_le_detComplexity`, `totalDegree_le_of_hasDetRep`
 - `DetComplexity/Permanent.lean`: `detComplexity_perm_two`, `n_le_detComplexity_perm`, `n_le_detComplexity_perm'`, `totalDegree_perm`
-- `DetComplexity/Universality.lean`: `HasSchurRep.add`, `HasSchurRep.mul_X`, `detComplexity_bind₁_le`, `exists_hasDetRep`, `hasDetRep_detComplexity`, `hasDetRep_of_matrix`, `hasSchurRep`, `hasSchurRep_C`, `totalDegree_bind₁_le_one`, `totalDegree_le_detComplexity'`
+- `DetComplexity/Universality.lean`: `HasSchurRep.add`, `HasSchurRep.mul_X`, `detComplexity_bind₁_le`, `detComplexity_mul_le`, `exists_hasDetRep`, `hasDetRep_detComplexity`, `hasDetRep_of_matrix`, `hasSchurRep`, `hasSchurRep_C`, `totalDegree_bind₁_le_one`, `totalDegree_le_detComplexity'`
 <!-- BOARD:END -->
 
 ## Roadmap

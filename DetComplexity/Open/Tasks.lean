@@ -28,12 +28,6 @@ theorem detComplexity_X [Nontrivial R] (i : σ) :
     detComplexity (X i : MvPolynomial σ R) = 1 := by
   sorry
 
-/-- TASK T-003 | easy | dc is subadditive under products
-Block-diagonal matrix; see `det_fromBlocks_zero₂₁` and `hasDetRep_of_matrix`. -/
-theorem detComplexity_mul_le (p q : MvPolynomial σ R) :
-    detComplexity (p * q) ≤ detComplexity p + detComplexity q := by
-  sorry
-
 /-- TASK T-004 | easy | Representations can be padded
 Add a row and column with a single `1` on the diagonal. -/
 theorem HasDetRep.succ {p : MvPolynomial σ R} {m : ℕ} (h : HasDetRep p m) :
