@@ -55,7 +55,7 @@ Literature bounds are not verified here. Sources and hypotheses: `data/literatur
 | T-009 | medium | A bordered matrix with a solved linear system is a representation | `hasDetRep_of_solve` | `DetComplexity/Open/Tasks.lean` |
 | T-011 | medium | Expansion of the permanent along the last row | `permanent_expand_last_row` | `DetComplexity/Open/Tasks.lean` |
 
-### Proved (19 theorems, standard axioms only)
+### Proved (20 theorems, standard axioms only)
 
 Names only: what each one says is in `statements.lock`, printed by Lean. Descriptions written by
 authors are deliberately not shown here, because the machine cannot check them.
