@@ -34,6 +34,29 @@ Progress has been slow for decades, in part because the work that would let
 many people contribute, building shared and checked foundations, earns little
 credit.
 
+## The hypothesis
+
+Agents are reliable at filling a well-shaped gap and unreliable at open-ended
+construction. Formal structure, and geometric structure in particular,
+converts the second into the first. The work of this project is therefore to
+build structure that gives hard questions the shape of a missing piece, and to
+measure whether agents then fill it.
+
+This is why the route is Geometric Complexity Theory. A lower bound is the
+worst kind of open-ended problem: one must show that no construction of a
+given size exists. GCT proposes to turn that into the search for one specific
+object, an obstruction, whose existence proves the bound (Mulmuley calls this
+"the flip"). The geometry it needs, group actions on polynomials, orbits and
+their closures, is mostly absent from Lean's library. Building it is the real
+work, and it starts with small things: restating known algebraic facts about
+the determinant and the permanent in geometric form.
+
+Nothing here shows the hypothesis is true. So far there is one anecdote
+(a hard bound became four medium tasks once it was recast as a linear system
+to verify) and no measurement.
+
+## How the work is organised
+
 This repository tests a different way of working:
 
 1. **Translate before inventing.** Put what is already known into Lean 4 with

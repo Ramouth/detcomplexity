@@ -22,6 +22,22 @@ one you were given, or the easiest open one. Do not start a task marked
 Stay inside the four kinds of PR in `CONTRIBUTING.md`. Never produce prose
 arguments or claimed solutions that the referee cannot check.
 
+## What kind of contribution is wanted
+
+Read "The hypothesis" in `README.md`. In short: do not attempt long open-ended
+derivations. The project wants hard questions turned into gaps with a shape.
+When you propose tasks (a Statement PR), prefer, in this order:
+
+1. statements whose proof is a witness that can be checked (an explicit
+   matrix, a solution of a linear system, an object with stated properties);
+2. geometric restatements of facts already proved here: symmetry, invariance
+   under a group action, membership in an orbit or an image;
+3. structure that later statements need (definitions, with the smallest facts
+   that show they are the right ones).
+
+A split of a hard task is good when each piece is a gap of this kind, not
+merely when each piece is short.
+
 ## Rules
 
 - `sorry` only in `DetComplexity/Open/`. No `admit`, no `axiom`, no

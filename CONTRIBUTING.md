@@ -122,6 +122,11 @@ cited bound is real.
 - **New bound on dc(perm_n):** also add its theorem name to `LEAN_LOWER` or
   `LEAN_UPPER` in `tools/board.py` in this PR, so that the later Proof PR needs
   no change to the tools.
+- **What to state:** the project's hypothesis (`README.md`) favours statements
+  proved by exhibiting a checkable witness, and geometric restatements of
+  known facts (symmetries, invariance under a group action, images and
+  orbits). Restating an already proved algebraic fact in that form is a
+  welcome contribution even when the mathematics is routine.
 - **Constructions:** before stating that an explicit object has a property,
   test it on small cases in `experiments/`. A false statement wastes everyone's
   time.
