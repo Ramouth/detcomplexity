@@ -9,12 +9,12 @@ rules; agents should also read `CLAUDE.md`.
 A PR is welcome if, after it merges, the machine can tell that something moved.
 That means exactly one of:
 
-| Kind | What it does | Who decides |
+| Kind | What it does | What the maintainer checks before merging |
 |---|---|---|
-| **Proof** | Proves a task from `DetComplexity/Open/` and moves it into the library | the referee alone |
-| **Certificate** | Adds a data file that the verifier accepts | the referee alone |
-| **Statement** | Adds, splits, corrects or relabels a task or a definition | the referee plus a human reviewer |
-| **Rules and tools** | Improves the referee, the scripts or these instructions | a human reviewer |
+| **Proof** | Proves a task from `DetComplexity/Open/` and moves it into the library | referee green; only allowed files touched |
+| **Certificate** | Adds a file to `data/certificates/` that the verifier accepts | referee green; only allowed files touched |
+| **Statement** | Adds, splits, corrects or relabels a task; adds or changes a definition; edits `data/literature.json` | the content, by someone who can judge the mathematics |
+| **Rules and tools** | Changes the referee, scripts, CI, dependencies or these instructions | the content |
 
 Not welcome, and closed without discussion:
 
@@ -30,14 +30,45 @@ A big result arrives here the same way a small one does: as a chain of small
 merged tasks. If a task is too big, the useful contribution is a Statement PR
 that splits it.
 
+## How merging works (stage one)
+
+A maintainer merges every PR. Nothing merges automatically.
+
+For Proof and Certificate PRs the maintainer does not read the mathematics.
+They check two mechanical things: the `referee` check is green, and the PR
+touches only the allowed files, which are `DetComplexity/**/*.lean`,
+`data/certificates/*.json`, the generated block in `README.md` and
+`statements.lock`. A PR that touches anything else is a Statement or Rules PR,
+whatever it calls itself.
+
+Stage two (not built): an independent proof checker in a separate CI job, a
+gate that classifies PRs by changed paths, and automatic merging. Until then,
+do not describe a merged proof as verified without a human in the loop.
+
+## Keep the scoreboard current: your job, every time
+
+The README scoreboard and `statements.lock` are generated. Two PRs that are
+each correct can still leave them wrong once both merge. So:
+
+1. Before you open a PR, and again whenever `main` has moved, bring your branch
+   up to date with `main` (rebase or merge).
+2. Run `tools/check.sh`. It regenerates both files from the code.
+3. Commit what it changed. Then run `tools/check.sh --check`; it must exit 0.
+
+Never resolve a conflict in the scoreboard block or in `statements.lock` by
+hand. Take either side, run `tools/check.sh`, commit the result. If you find
+`main` itself stale, fix that first with a PR that contains only the
+regenerated files.
+
 ## Proof PRs
 
-1. Claim the task: open an issue or draft PR titled with the task id (`T-009`),
-   on a branch `task/T-009`. One task per PR.
+1. Pick a task from the scoreboard. Tasks marked easy or medium are not
+   claimed: the first green PR is merged and duplicates are closed. Use a
+   branch named `task/T-009`. One task per PR.
 2. Prove it. **Do not change the statement**, including whether an argument is
-   explicit or implicit. The referee compares every statement with
-   `statements.lock` and fails on any difference. If a statement is wrong or
-   awkward, stop and open a Statement PR.
+   explicit or implicit. The referee compares every statement and definition
+   with `statements.lock` and fails on any difference. If a statement is wrong
+   or awkward, stop and open a Statement PR.
 3. Move the theorem out of `Open/` into the library:
    - `Basic.lean`: definitions and facts that need nothing else;
    - `Universality.lean`: existence of representations and general closure
@@ -47,53 +78,92 @@ that splits it.
    Mind the `variable` lines: they differ between files, and a cut-and-paste can
    silently change binders. The lock check will tell you.
 4. Replace the `TASK ...` docstring with a one-line description of the result.
-5. Helper lemmas are fine. Make them `private` unless they are useful on their
-   own; public ones appear on the board.
-6. If the theorem is a new bound on `dc(perm_n)`, register it in the
-   `LEAN_LOWER` / `LEAN_UPPER` table at the top of `tools/board.py`, or the
-   scoreboard will not move.
-7. Run `tools/check.sh` and commit everything it regenerated (`README.md`,
-   `statements.lock`) together with the proof.
+5. Make helper lemmas `private` unless they are useful on their own. The
+   number that matters is tasks closed, not theorems added.
+6. Update the scoreboard as described above.
+
+If you have no access to GitHub (many agents do not): do the same on a local
+branch, commit, and hand back the branch name together with the filled-in text
+of `.github/pull_request_template.md`. A person opens the PR.
 
 ## Certificate PRs
 
 Add a JSON file to `data/certificates/` in the format documented in
 `tools/verify_data.py`: an explicit matrix whose determinant is the permanent.
-A smaller matrix than the current best for some n moves the scoreboard.
+Only a matrix smaller than the current best for its n is worth a PR.
 
 ## Statement PRs
 
-Add a theorem with `sorry` to `DetComplexity/Open/`. The docstring's first line
-is `TASK <id> | <easy|medium|hard> | <title>`, followed by a hint and a source.
-Before stating a construction (an explicit object claimed to have a property),
-test it on small cases in `experiments/`; a false statement wastes everyone's
-time. To change or remove an existing statement, run the referee with
-`ALLOW_STATEMENT_CHANGE=1` and say why in the PR. Label the PR
-`statement-change`.
+These need a reviewer because the machine cannot judge whether a statement says
+what the mathematics means, whether a definition is the right one, or whether a
+cited bound is real.
 
-A human reviews these because the machine cannot judge whether a statement says
-what the mathematics means, or whether a definition is the right one.
+- **New task:** a theorem with `sorry` in `DetComplexity/Open/`. The docstring's
+  first line is `TASK <id> | <easy|medium|hard> | <title>`, then a hint and a
+  source. State the hypotheses the source states (field, characteristic).
+- **New bound on dc(perm_n):** also add its theorem name to `LEAN_LOWER` or
+  `LEAN_UPPER` in `tools/board.py` in this PR, so that the later Proof PR needs
+  no change to the tools.
+- **Constructions:** before stating that an explicit object has a property,
+  test it on small cases in `experiments/`. A false statement wastes everyone's
+  time.
+- **Changing or removing a statement or definition:** run the referee with
+  `ALLOW_STATEMENT_CHANGE=1` and explain why in the PR.
+- **Literature:** every entry in `data/literature.json` names the paper, the
+  exact result and its hypotheses, and says whether the source was read.
+- **Hard tasks:** claim by opening an issue that states an expiry date. Prefer
+  splitting to proving.
+
+Every statement and definition in the repository is currently unreviewed by a
+mathematician. That is the project's main open risk; reviews are welcome as
+issues.
+
+## Rules and tools PRs
+
+Any change under `tools/`, `.github/`, the Lake files (`lakefile.toml`,
+`lake-manifest.json`, `lean-toolchain`), `CONTRIBUTING.md`, `CLAUDE.md` or
+`README.md` outside the generated block. A mathlib or toolchain bump is one of
+these, on its own, with nothing else in the PR. When the instructions change,
+rerun the cold-start test: give a fresh agent only the repository and two
+tasks, and ask it to report every point of friction.
 
 ## What the referee enforces
 
-`tools/check.sh` regenerates the scoreboard and the lock file and exits 0 only
-if: the build passes; `sorry` appears only in `Open/`; no theorem outside
-`Open/` depends on `sorry` or on axioms other than `propext`,
-`Classical.choice`, `Quot.sound`; no theorem inside `Open/` is already proved;
-no existing statement changed; every certificate verifies. CI runs
-`tools/check.sh --check`, which also fails if the committed generated files
-were stale. It prints build warnings; clean up the ones in your own code.
+`tools/check.sh` builds the project, asks Lean for every constant the project
+defines (including private and auxiliary ones) and exits 0 only if:
+
+- nothing outside `Open/` depends on `sorry`;
+- nothing is declared as an axiom or uses an axiom other than `propext`,
+  `Classical.choice`, `Quot.sound`;
+- no theorem inside `Open/` is already proved, and every one has a `TASK` line
+  with a unique id;
+- no existing statement or definition changed or disappeared, judged by a hash
+  of the full term and not only by how it prints;
+- every certificate verifies, and no literature bound contradicts a verified one.
+
+Without arguments it then regenerates the scoreboard and the lock. With
+`--check` (used by CI) it writes nothing and fails if either is stale.
+
+## What it does not enforce
+
+Be honest about these; a reviewer may ask.
+
+- One task per PR, branch names, and replacing the `TASK` docstring.
+- That a new public theorem was a task first.
+- Proof quality. Build warnings are printed, not fatal; clean up your own.
+- **Lean code runs programs while it compiles.** A deliberately malicious PR
+  can change what the referee sees. The referee protects against mistakes and
+  against the shortcuts found in the audit of 2026-11-20, not against that.
+  This is why a maintainer merges and why stage two needs an independent checker.
 
 ## Repository settings (for maintainers)
 
-- Protect `main`: require the `referee` check, forbid direct pushes.
-- Proof and Certificate PRs may merge on a green referee alone.
-- Require one approving review on PRs labelled `statement-change` and on any
-  PR touching `tools/`, `.github/`, `CONTRIBUTING.md` or `CLAUDE.md`.
-- After merging, run `tools/credit.py` on `main` and commit `CREDITS.md`.
-- When the instructions change, rerun the cold-start test: give a fresh agent
-  only the repository and two tasks, and ask it to report every point of
-  friction. Fix what it finds.
+- Protect `main`: require the `referee` check, forbid direct and force pushes,
+  require branches to be up to date before merging.
+- Create the label `statement-change`. CI allows statement changes only on PRs
+  carrying it; only people with triage rights can set it, and it must be set
+  again after new commits are pushed.
+- First-time contributors' workflow runs need approval; keep that default.
 
 ## Setup
 
@@ -104,5 +174,6 @@ lake exe cache get    # download prebuilt mathlib; never build it from source
 tools/check.sh
 ```
 
-Do not run `lake update` unless the PR is specifically a mathlib bump.
-Python 3 with `sympy` is needed for the data checks.
+Never run `lake update` in a Proof, Certificate or Statement PR. Python 3 with
+`sympy` is needed for the data checks. Keep scratch files in `scratch/`, which
+git ignores.

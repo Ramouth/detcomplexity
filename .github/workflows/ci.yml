@@ -1,22 +1,39 @@
-# Untested: written before the repository had a remote. Verify on first push.
+# UNTESTED: written before the repository had a remote. Watch the first run.
+# Unprivileged build plus referee. It runs the pull request's own code, so its
+# result informs the maintainer who merges; it is not a proof of honesty.
 name: referee
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+permissions:
+  contents: read
 jobs:
-  check:
+  referee:   # branch protection must require this job name
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          persist-credentials: false
       - uses: leanprover/lean-action@v1
         with:
           use-mathlib-cache: true
           build: true
-      - uses: actions/setup-python@v5
+          test: false
+          lint: false
+          use-github-cache: false
+      - uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
-      - run: pip install sympy
+          python-version: "3.13"
+      - run: pip install "sympy==1.14.0"
       - run: tools/check.sh --check
         env:
-          STATEMENT_BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || 'HEAD~1' }}
-          ALLOW_STATEMENT_CHANGE: ${{ contains(github.event.pull_request.labels.*.name, 'statement-change') && '1' || '0' }}
+          # Pull request: compare statements with the base branch.
+          # Push to main: consistency only; the decision was made on the PR.
+          STATEMENT_BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || 'HEAD' }}
+          ALLOW_STATEMENT_CHANGE: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'statement-change') && '1' || '0' }}
+      # Stage two: an independent kernel re-check in a separate job. lean-action
+      # documents inputs for this; not enabled until tested with `sorry` in Open/.

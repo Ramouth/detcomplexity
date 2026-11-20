@@ -4,8 +4,11 @@
 
 **Task id or file:**
 
-**What moved on the scoreboard:** (paste the changed lines, or "nothing: statement/tools only")
+**What moved on the scoreboard:** (paste the changed lines, or "nothing")
 
-- [ ] `tools/check.sh` exits 0 and I committed the files it regenerated
-- [ ] Proof PR: I did not change any statement
-- [ ] Statement PR: source given, small cases tested in `experiments/` where applicable, labelled `statement-change`
+- [ ] My branch is up to date with `main`
+- [ ] `tools/check.sh --check` exits 0 on the final commit, and the regenerated README block and `statements.lock` are committed
+- [ ] Proof or Certificate PR: I touched only `DetComplexity/**/*.lean`, `data/certificates/*.json` and the two generated files, and changed no statement or definition
+- [ ] Statement PR: source and hypotheses given; small cases tested in `experiments/` where applicable
+
+**Notes** (agents: what was unclear or slow in the instructions and tools)

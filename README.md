@@ -1,20 +1,28 @@
-# DetComplexity: a pilot for open, agent-assisted GCT
+# DetComplexity: small, machine-checked steps on a hard problem
 
 ## The idea
 
-Geometric Complexity Theory (GCT) is the most ambitious geometric program
-toward P ≠ NP. Its framework exists, but only on paper: dense, scattered and
-unverified. Building frameworks earns little prestige, so the work stalls.
+The permanent-versus-determinant problem is the algebraic cousin of P versus
+NP. It asks how large a determinant must be to express the n×n permanent; that
+size is the *determinantal complexity*, dc. Proving that it grows fast enough
+would separate two complexity classes. Progress has been slow for decades, in
+part because the work that would let many people contribute, building shared,
+checked foundations, earns little credit.
 
-This pilot tests a different model:
+This repository tests a different way of working:
 
-1. **Translate before inventing.** Formalize GCT's existing foundations in
-   Lean 4 / mathlib, where every step is machine-checked.
-2. **Use scoreboards, not vibes.** Organize progress around numbers that can
-   move, so partial progress is measurable and claimable.
-3. **Make tasks claimable.** Break the program into small, independent,
-   verifiable tasks that humans *and* agents can take on (the bbchallenge /
-   Equational Theories Project model).
+1. **Translate before inventing.** Put what is already known into Lean 4 with
+   mathlib, where every step is machine-checked.
+2. **A scoreboard, not impressions.** Organize the work around numbers that can
+   move, so partial progress is measurable.
+3. **Bite-sized tasks.** Every open problem is a single statement in the code
+   that a person or an agent can prove and submit as one pull request.
+4. **Rules as the product.** The contribution rules and the instructions for
+   agents are tested like code. See `CONTRIBUTING.md` and `CLAUDE.md`.
+
+Geometric Complexity Theory, the most developed programme on this problem,
+studies a limiting ("border") version of dc. This repository starts with plain
+dc, which is the ground floor beneath it.
 
 <!-- BOARD:START -->
 ## Scoreboard
@@ -72,9 +80,17 @@ The scoreboard lists what is open now. Beyond it:
 ## Where things are
 
 - The scoreboard above: generated from the code by `tools/check.sh`; never edited by hand.
-- `statements.lock`: every theorem statement, generated; the referee uses it to detect a changed statement.
+- `statements.lock`: every theorem statement and definition with a hash of the full term, generated; the referee uses it to detect a change.
 - `CONTRIBUTING.md`: how to take a task, add a certificate, or add a task.
 - `DetComplexity/`: the Lean library. `DetComplexity/Open/` holds the open tasks.
 - `data/`: certificates (explicit matrices, machine-verified) and literature bounds.
 - `experiments/`: executable small-case versions of constructions, written before the proofs.
 - `tools/check.sh`: the referee.
+
+## Status and history
+
+Everything here was written by AI agents in one evening (2026-11-20) under one
+person's direction, then audited by four further agents. No mathematician has
+reviewed the definitions or the open statements. The history before
+publication was reorganised into one step per commit; each step was checked
+with the referee as it existed at that step.
