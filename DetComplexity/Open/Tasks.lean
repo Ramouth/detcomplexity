@@ -58,15 +58,6 @@ theorem hasDetRep_of_solve {ι : Type*} [Fintype ι] [DecidableEq ι]
     HasDetRep (c - u ⬝ᵥ v) (Fintype.card ι + 1) := by
   sorry
 
-/-- TASK T-010 | easy | det (1 - N) = 1 when N strictly raises a rank
-If every nonzero entry `N i j` has `r i < r j`, then `1 - N` is block triangular
-with respect to `r` and every diagonal block is the identity; see
-`Matrix.BlockTriangular.det`. Pure linear algebra; a candidate for mathlib itself. -/
-theorem det_one_sub_of_rank_lt {A : Type*} [CommRing A] {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (N : Matrix ι ι A) (r : ι → ℕ) (h : ∀ i j, N i j ≠ 0 → r i < r j) :
-    (1 - N).det = 1 := by
-  sorry
-
 /-- TASK T-011 | medium | Expansion of the permanent along the last row
 The permanent analogue of Laplace expansion, without signs. Indexing is
 checked in `experiments/grenet_split.py`. A candidate for mathlib itself. -/
