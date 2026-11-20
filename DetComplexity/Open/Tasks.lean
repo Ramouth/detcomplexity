@@ -40,13 +40,6 @@ theorem HasDetRep.succ {p : MvPolynomial σ R} {m : ℕ} (h : HasDetRep p m) :
     HasDetRep p (m + 1) := by
   sorry
 
-/-- TASK T-006 | medium | dc does not increase under affine substitution
-Substitute into every matrix entry; an affine polynomial of affine polynomials
-is affine. This is what makes dc a measure of *projections*. -/
-theorem detComplexity_bind₁_le (f : σ → MvPolynomial τ R) (hf : ∀ i, (f i).totalDegree ≤ 1)
-    (p : MvPolynomial σ R) : detComplexity (bind₁ f p) ≤ detComplexity p := by
-  sorry
-
 /-- TASK T-007 | hard | Grenet's upper bound: dc(perm_n) ≤ 2^n - 1
 Construction and sign convention are executable in `experiments/grenet.py`
 (verified for n ≤ 4). Source: Grenet 2011. -/

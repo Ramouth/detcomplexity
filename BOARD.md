@@ -24,11 +24,10 @@ Claim one by opening an issue or draft PR named after its id. See `CONTRIBUTING.
 | T-002 | easy | A variable has dc exactly 1 | `detComplexity_X` | `DetComplexity/Open/Tasks.lean` |
 | T-003 | easy | dc is subadditive under products | `detComplexity_mul_le` | `DetComplexity/Open/Tasks.lean` |
 | T-004 | easy | Representations can be padded | `HasDetRep.succ` | `DetComplexity/Open/Tasks.lean` |
-| T-006 | medium | dc does not increase under affine substitution | `detComplexity_bind₁_le` | `DetComplexity/Open/Tasks.lean` |
 | T-007 | hard | Grenet's upper bound: dc(perm_n) ≤ 2^n - 1 | `detComplexity_perm_le` | `DetComplexity/Open/Tasks.lean` |
 | T-008 | hard | Mignon–Ressayre lower bound: dc(perm_n) ≥ n²/2 in characteristic 0 | `sq_le_two_mul_detComplexity_perm` | `DetComplexity/Open/Tasks.lean` |
 
-## Proved (16 theorems, standard axioms only)
+## Proved (18 theorems, standard axioms only)
 
 - `totalDegree_det_le` (DetComplexity/Basic.lean): Key lemma: the determinant of an `n × n` affine matrix has total degree
 - `totalDegree_le_of_hasDetRep` (DetComplexity/Basic.lean): Any determinantal representation is at least as large as the degree.
@@ -46,3 +45,5 @@ Claim one by opening an issue or draft PR named after its id. See `CONTRIBUTING.
 - `exists_hasDetRep` (DetComplexity/Universality.lean): **Universality.** Every polynomial is the determinant of a square matrix of
 - `hasDetRep_detComplexity` (DetComplexity/Universality.lean): `dc p` is attained: `p` has a determinantal representation of size `dc p`.
 - `totalDegree_le_detComplexity'` (DetComplexity/Universality.lean): **Degree lower bound, unconditional.**
+- `totalDegree_bind₁_le_one` (DetComplexity/Universality.lean): Substituting affine polynomials into an affine polynomial gives an affine polynomial.
+- `detComplexity_bind₁_le` (DetComplexity/Universality.lean): **dc does not increase under affine substitution.** Substitute into every

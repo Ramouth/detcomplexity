@@ -111,4 +111,31 @@ theorem totalDegree_le_detComplexity' (p : MvPolynomial σ R) :
     p.totalDegree ≤ detComplexity p :=
   totalDegree_le_detComplexity p (exists_hasDetRep p)
 
+-- The statements below are about `bind₁`, which mathlib now deprecates in favour of `aeval`.
+set_option linter.deprecated false in
+/-- Substituting affine polynomials into an affine polynomial gives an affine polynomial. -/
+theorem totalDegree_bind₁_le_one {τ : Type*} (f : σ → MvPolynomial τ R)
+    (hf : ∀ i, (f i).totalDegree ≤ 1) (q : MvPolynomial σ R) (hq : q.totalDegree ≤ 1) :
+    (bind₁ f q).totalDegree ≤ 1 := by
+  rw [bind₁, aeval_def, eval₂_eq]
+  refine totalDegree_finsetSum_le fun d hd => ?_
+  refine (totalDegree_mul _ _).trans ?_
+  rw [algebraMap_eq, totalDegree_C, zero_add]
+  refine (totalDegree_finsetProd _ _).trans ?_
+  refine le_trans (Finset.sum_le_sum fun i _ => (totalDegree_pow _ _).trans
+    (Nat.mul_le_mul_left _ (hf i))) ?_
+  simpa [Finsupp.sum] using (le_totalDegree hd).trans hq
+
+set_option linter.deprecated false in
+/-- **dc does not increase under affine substitution.** Substitute into every
+matrix entry; an affine polynomial of affine polynomials is affine. This is
+what makes dc a measure of *projections*. -/
+theorem detComplexity_bind₁_le {τ : Type*} (f : σ → MvPolynomial τ R)
+    (hf : ∀ i, (f i).totalDegree ≤ 1) (p : MvPolynomial σ R) :
+    detComplexity (bind₁ f p) ≤ detComplexity p := by
+  obtain ⟨A, hA, hdet⟩ := hasDetRep_detComplexity p
+  refine detComplexity_le_of_hasDetRep ⟨A.map (bind₁ f), fun i j => ?_, ?_⟩
+  · exact totalDegree_bind₁_le_one f hf _ (hA i j)
+  · exact (AlgHom.map_det _ _).symm.trans (congrArg _ hdet)
+
 end DetComplexity
