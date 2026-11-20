@@ -114,7 +114,9 @@ def main():
         else:
             status = f"open: between {max(lo or 0, lit_lo)} and {min(ups) if ups else 2 ** n - 1}"
         L.append(f"| {n} | {lo if lo is not None else '–'} | {lit_lo} | {cert if cert is not None else '–'} | {up_l if up_l is not None else '–'} | {status} |")
-    L += ["", "Literature entries are unverified here and their citations unchecked; see `data/literature.json`.", "",
+    L += ["", "Literature bounds are not verified here and assume a field of characteristic 0 "
+          "(in characteristic 2 the permanent is the determinant and dc(perm_n) = n). "
+          "Sources and hypotheses: `data/literature.json`.", "",
           "### Open tasks", "", "Claim one by opening an issue or draft PR named after its id. See `CONTRIBUTING.md`.", "",
           "| id | difficulty | task | theorem | file |", "|---|---|---|---|---|"]
     tasks = []

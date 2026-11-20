@@ -1,10 +1,18 @@
 {
-  "_comment": "Bounds known from the literature but NOT verified in this repo. Each entry is a task waiting to happen: replace it with a Lean proof or a certificate. Citations were entered from memory and must be checked against the papers before anyone relies on them.",
+  "_comment": "Bounds known from the literature but NOT verified in this repo. Each entry is a task waiting to happen: replace it with a Lean proof or a certificate. Sources marked 'read' were checked against the paper text by an audit agent on 2026-11-20, not by a human. The scoreboard's literature column assumes a field of characteristic 0; see 'hypotheses'.",
+  "hypotheses": "In characteristic 2 the permanent equals the determinant, so dc(perm_n) = n and none of the lower bounds below apply. The Lean library works over an arbitrary commutative ring; any Lean statement of these bounds must add the field and characteristic hypothesis.",
   "lower": [
-    {"n": 3, "value": 7, "source": "Alper, Bogart, Velasco: A lower bound for the determinantal complexity of a hypersurface (citation unchecked)"},
-    {"n": "all", "formula": "ceil(n^2/2)", "source": "Mignon, Ressayre 2004, characteristic 0 (task T-008)"}
+    {"n": 3, "value": 7, "field": "any field of characteristic != 2", "source": "Alper, Bogart, Velasco, A lower bound for the determinantal complexity of a hypersurface, arXiv:1505.02205, Corollary 1.4 (read)"},
+    {"n": 4, "value": 9, "field": "any field of characteristic != 2", "source": "Alper, Bogart, Velasco, arXiv:1505.02205, Corollary 1.4 (read)"},
+    {"n": "all", "formula": "ceil(n^2/2)", "field": "any field of characteristic 0", "source": "Mignon, Ressayre, A quadratic bound for the determinant and permanent problem, 2004 (statement confirmed only as quoted in later papers; task T-008)"}
   ],
   "upper": [
-    {"n": "all", "formula": "2^n-1", "source": "Grenet 2011 (task T-007; certificates here for n <= 4)"}
+    {"n": "all", "formula": "2^n-1", "field": "any commutative ring (the paper states characteristic != 2; the construction is characteristic-free)", "source": "Grenet, An upper bound for the permanent versus determinant problem, manuscript 2011 (read; task T-007; certificates here for n <= 4)"}
+  ],
+  "not_on_the_board_yet": [
+    {"claim": "dc(perm_n) >= (n-1)^2 + 1 over the real numbers, which would give 10 for n = 4 and 17 for n = 5", "source": "Yabe, Bi-polynomial rank and determinantal complexity, arXiv:1504.00151 (abstract only; refereed status not checked)"},
+    {"claim": "dc(perm_n) >= (n-2)(n-3)/2 over any field of characteristic != 2", "source": "Cai, Chen, Li, Quadratic lower bound for permanent vs. determinant in any characteristic, computational complexity 19 (2010) (abstract and introduction read; the explicit bound only as quoted elsewhere)"},
+    {"claim": "dc(perm_n) >= n + 1 for n >= 3 in characteristic 0", "source": "Marcus, Minc 1961 (only as quoted in Cai, Chen, Li)"},
+    {"claim": "with entries restricted to 0, 1 and variables, perm_3 needs size 7", "source": "Hüttenhain, Ikenmeyer, Binary determinantal complexity, arXiv:1410.8202 (abstract read)"}
   ]
 }
