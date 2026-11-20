@@ -66,4 +66,10 @@ theorem totalDegree_le_detComplexity (p : MvPolynomial σ R)
     (hp : ∃ m, HasDetRep p m) : p.totalDegree ≤ detComplexity p :=
   totalDegree_le_of_hasDetRep (Nat.sInf_mem (s := {m | HasDetRep p m}) hp)
 
+/-- Any determinantal representation bounds `dc` from above. This is how every
+upper bound on the scoreboard is proved. -/
+theorem detComplexity_le_of_hasDetRep {p : MvPolynomial σ R} {m : ℕ}
+    (h : HasDetRep p m) : detComplexity p ≤ m :=
+  Nat.sInf_le h
+
 end DetComplexity
